@@ -252,7 +252,8 @@
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 card.innerHTML = `
-                    <img src="${template.imageUrl}" alt="${template.title}">
+                    <img src="${API_URL}/${template.imageUrl}" alt="${template.title}">
+
                     <h3>${template.title}</h3>
                     <p>${template.text || ''}</p>
                     <div class="card-actions">
