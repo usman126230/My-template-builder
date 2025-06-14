@@ -1,1 +1,17 @@
+{
+  "appTitle": "أنشئ قالبك الخاص",
+  "searchPlaceholder": "ابحث في القوالب...",
+  "searchButton": "بحث",
+  "createSectionTitle": "إنشاء قالب جديد",
+  "templateTitleLabel": "عنوان القالب (موجه)",
+  "uploadPhotoLabel": "تحميل صورتك",
+  "detailedTextLabel": "اكتب نصًا تفصيليًا",
+  "createButton": "إنشاء قالب",
+  "updateButton": "تحديث القالب",
+  "cancelButton": "إلغاء التعديل",
+  "currentTemplatesTitle": "القوالب الحالية",
+  "editButton": "تعديل",
+  "downloadButton": "تحميل",
+  "deleteButton": "حذف"
+}
 
