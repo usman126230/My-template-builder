@@ -2,16 +2,34 @@ const express = require('express');
 const multer = require('multer');
 const path = require('path');
 const cors = require('cors');
+const mongoose = require('mongoose'); // Mongoose کو شامل کریں
 
 const app = express();
-// Render جیسی سروسز کے لیے یہ لائن اہم ہے
 const PORT = process.env.PORT || 3000;
 
+// === ڈیٹا بیس سے کنکشن ===
+const mongoUri = process.env.MONGO_URI; // Render کے Environment Variable سے کنکشن سٹرنگ حاصل کریں
+
+mongoose.connect(mongoUri)
+    .then(() => console.log("ڈیٹا بیس سے کنکشن کامیاب ہو گیا!"))
+    .catch(err => console.error("ڈیٹا بیس سے کنکشن ناکام:", err));
+
+// === ٹیمپلیٹ کا ڈھانچہ (Schema) بنانا ===
+// یہ ہمارے ڈیٹا بیس کو بتاتا ہے کہ ہر ٹیمپلیٹ میں کیا معلومات ہوں گی
+const templateSchema = new mongoose.Schema({
+    title: { type: String, required: true },
+    text: String,
+    imageUrl: { type: String, required: true },
+    createdAt: { type: Date, default: Date.now }
+});
+
+// اسکیما سے ماڈل بنانا
+const Template = mongoose.model('Template', templateSchema);
+
+
+// پرانے مڈل ویئر
 app.use(cors());
-
-// public فولڈر میں موجود HTML/CSS/JS فائلوں کو دکھانے کے لیے
 app.use(express.static('public'));
-
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
@@ -27,8 +45,8 @@ const storage = multer.diskStorage({
 
 const upload = multer({ storage: storage });
 
-// API روٹ جو تصویر اور ڈیٹا وصول کرے گا
-app.post('/api/create-template', upload.single('templateImage'), (req, res) => {
+// === API روٹ کو اپ ڈیٹ کرنا تاکہ وہ ڈیٹا بیس میں محفوظ کرے ===
+app.post('/api/create-template', upload.single('templateImage'), async (req, res) => {
     
     const { title, text } = req.body;
     const imageFile = req.file;
@@ -37,16 +55,28 @@ app.post('/api/create-template', upload.single('templateImage'), (req, res) => {
         return res.status(400).json({ message: 'عنوان اور تصویر دونوں ضروری ہیں' });
     }
 
-    console.log('ڈیٹا موصول ہوا:', { title, text, imagePath: imageFile.path });
-
-    res.status(200).json({ 
-        message: 'ٹیمپلیٹ کامیابی سے بن گئی!',
-        data: {
+    try {
+        // ایک نئی ٹیمپلیٹ بنائیں
+        const newTemplate = new Template({
             title: title,
             text: text,
-            imageUrl: imageFile.path
-        }
-    });
+            imageUrl: imageFile.path // تصویر کا راستہ
+        });
+
+        // اسے ڈیٹا بیس میں محفوظ کریں
+        await newTemplate.save();
+        
+        console.log('نئی ٹیمپلیٹ ڈیٹا بیس میں محفوظ ہو گئی:', newTemplate);
+
+        res.status(201).json({ 
+            message: 'ٹیمپلیٹ کامیابی سے ڈیٹا بیس میں محفوظ ہو گئی!',
+            data: newTemplate
+        });
+
+    } catch (error) {
+        console.error("ڈیٹا محفوظ کرتے وقت خرابی:", error);
+        res.status(500).json({ message: 'سرور میں خرابی کی وجہ سے ڈیٹا محفوظ نہیں ہو سکا' });
+    }
 });
 
 // سرور کو شروع کریں
