@@ -1,1 +1,17 @@
+{
+  "appTitle": "اپنا ٹیمپلیٹ خود بنائیں",
+  "searchPlaceholder": "ٹیمپلیٹس تلاش کریں...",
+  "searchButton": "تلاش کریں",
+  "createSectionTitle": "نئی ٹیمپلیٹ بنائیں",
+  "templateTitleLabel": "ٹیمپلیٹ کا عنوان (Prompt)",
+  "uploadPhotoLabel": "اپنی تصویر اپلوڈ کریں",
+  "detailedTextLabel": "تفصیلی متن لکھیں",
+  "createButton": "ٹیمپلیٹ بنائیں",
+  "updateButton": "ٹیمپلیٹ اپ ڈیٹ کریں",
+  "cancelButton": "ایڈٹ منسوخ کریں",
+  "currentTemplatesTitle": "موجودہ ٹیمپلیٹس",
+  "editButton": "ایڈٹ",
+  "downloadButton": "ڈاؤن لوڈ",
+  "deleteButton": "ڈیلیٹ"
+}
 
