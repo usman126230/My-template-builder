@@ -217,21 +217,30 @@
 
     <script>
     const templateForm = document.getElementById('template-form');
+    const titleInput = document.getElementById('template-title');
+    const textInput = document.getElementById('template-text');
+    const imageInput = document.getElementById('template-image');
+    const submitButton = templateForm.querySelector('.cta-button');
+    
     const messageDiv = document.getElementById('response-message');
     const galleryGrid = document.querySelector('.gallery-grid');
     
-    const API_URL = 'https://my-template-builder-1.onrender.com'; // آپ کا لائیو سرور URL
+    const API_URL = 'https://my-template-builder-1.onrender.com';
 
-    // فنکشن: تمام ٹیمپلیٹس کو ڈیٹا بیس سے لانا اور دکھانا
+    // یہ متغیر یاد رکھے گا کہ ہم ایڈٹ موڈ میں ہیں یا نہیں
+    let editState = {
+        isEditing: false,
+        templateId: null
+    };
+
+    // --- فنکشنز ---
+
+    // فنکشن: تمام ٹیمپلیٹس کو لانا اور دکھانا
     async function fetchAndDisplayTemplates() {
         try {
             const response = await fetch(`${API_URL}/api/templates`);
-            if (!response.ok) {
-                throw new Error('ڈیٹا لوڈ کرنے میں ناکامی');
-            }
             const templates = await response.json();
             
-            // گیلری کو پہلے خالی کریں
             galleryGrid.innerHTML = ''; 
 
             if (templates.length === 0) {
@@ -239,7 +248,6 @@
                 return;
             }
 
-            // ہر ٹیمپلیٹ کے لیے ایک کارڈ بنائیں
             templates.forEach(template => {
                 const card = document.createElement('div');
                 card.className = 'template-card';
@@ -247,52 +255,155 @@
                     <img src="${template.imageUrl}" alt="${template.title}">
                     <h3>${template.title}</h3>
                     <p>${template.text || ''}</p>
+                    <div class="card-actions">
+                        <button class="edit-btn" data-id="${template._id}">Edit</button>
+                        <button class="delete-btn" data-id="${template._id}">Delete</button>
+                    </div>
                 `;
                 galleryGrid.appendChild(card);
             });
 
         } catch (error) {
             console.error('Error fetching templates:', error);
-            galleryGrid.innerHTML = '<p>ٹیمپلیٹس لوڈ نہیں ہو سکیں۔ براہِ کرم صفحہ ریفریش کریں۔</p>';
+            galleryGrid.innerHTML = '<p>ٹیمپلیٹس لوڈ نہیں ہو سکیں۔</p>';
         }
     }
 
-    // فارم جمع کرانے کا ایونٹ
+    // فنکشن: ایڈٹ موڈ کو منسوخ کرنا
+    function cancelEditMode() {
+        editState.isEditing = false;
+        editState.templateId = null;
+        
+        templateForm.reset();
+        submitButton.textContent = 'Create a template';
+        
+        // اگر کینسل بٹن موجود ہے تو اسے ہٹا دیں
+        const cancelButton = document.querySelector('.cancel-btn');
+        if (cancelButton) {
+            cancelButton.remove();
+        }
+    }
+
+    // --- ایونٹ ہینڈلرز ---
+
+    // فارم جمع کرانے کا ایونٹ (یہ اب 'Create' اور 'Update' دونوں کو سنبھالے گا)
     templateForm.addEventListener('submit', async function(event) {
         event.preventDefault();
-        const formData = new FormData(templateForm);
         messageDiv.style.display = 'none';
 
-        try {
-            const response = await fetch(`${API_URL}/api/create-template`, {
-                method: 'POST',
-                body: formData,
-            });
+        // اگر ایڈٹ موڈ میں ہیں تو PUT ریکویسٹ بھیجیں
+        if (editState.isEditing) {
+            const updatedData = {
+                title: titleInput.value,
+                text: textInput.value
+            };
 
-            const result = await response.json();
-
-            if (response.ok) {
-                messageDiv.textContent = result.message;
-                messageDiv.className = 'message success';
-                templateForm.reset();
-                fetchAndDisplayTemplates(); // نئی ٹیمپلیٹ بنانے کے بعد گیلری کو ریفریش کریں
-            } else {
-                messageDiv.textContent = 'خرابی: ' + (result.message || 'Unknown error');
+            try {
+                const response = await fetch(`${API_URL}/api/templates/${editState.templateId}`, {
+                    method: 'PUT',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(updatedData)
+                });
+                const result = await response.json();
+                
+                if (response.ok) {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'message success';
+                    cancelEditMode(); // فارم کو ری سیٹ کریں
+                    fetchAndDisplayTemplates(); // گیلری ریفریش کریں
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                messageDiv.textContent = 'اپ ڈیٹ ناکام: ' + error.message;
                 messageDiv.className = 'message error';
             }
-        } catch (error) {
-            console.error('Fetch Error:', error);
-            messageDiv.textContent = 'سرور سے رابطہ کرنے میں ناکامی۔';
-            messageDiv.className = 'message error';
+        
+        } else { // اگر نیا بنا رہے ہیں تو POST ریکویسٹ بھیجیں
+            const formData = new FormData(templateForm);
+            try {
+                const response = await fetch(`${API_URL}/api/create-template`, {
+                    method: 'POST',
+                    body: formData,
+                });
+                const result = await response.json();
+
+                if (response.ok) {
+                    messageDiv.textContent = result.message;
+                    messageDiv.className = 'message success';
+                    templateForm.reset();
+                    fetchAndDisplayTemplates();
+                } else {
+                    throw new Error(result.message);
+                }
+            } catch (error) {
+                messageDiv.textContent = 'بنانے میں ناکامی: ' + error.message;
+                messageDiv.className = 'message error';
+            }
         }
         
         messageDiv.style.display = 'block';
+    });
+
+    // گیلری میں بٹن کلکس کو سنبھالنا (Edit اور Delete)
+    galleryGrid.addEventListener('click', async function(event) {
+        // اگر Edit بٹن پر کلک ہوا
+        if (event.target.classList.contains('edit-btn')) {
+            const id = event.target.dataset.id;
+            try {
+                const response = await fetch(`${API_URL}/api/templates/${id}`);
+                const template = await response.json();
+                
+                // فارم میں پرانا ڈیٹا بھریں
+                titleInput.value = template.title;
+                textInput.value = template.text;
+                
+                // ایڈٹ موڈ کو فعال کریں
+                editState.isEditing = true;
+                editState.templateId = id;
+                submitButton.textContent = 'Update Template';
+                
+                // کینسل بٹن شامل کریں (اگر پہلے سے موجود نہیں)
+                if (!document.querySelector('.cancel-btn')) {
+                    const cancelButton = document.createElement('button');
+                    cancelButton.textContent = 'Cancel Edit';
+                    cancelButton.className = 'cancel-btn';
+                    cancelButton.type = 'button'; // فارم کو سبمٹ ہونے سے روکنے کے لیے
+                    cancelButton.onclick = cancelEditMode; // کلک پر کینسل فنکشن چلائیں
+                    submitButton.after(cancelButton);
+                }
+                
+                window.scrollTo(0, 0); // صفحہ کے اوپر سکرول کریں
+                
+            } catch (error) {
+                console.error('ایڈٹ کے لیے ڈیٹا لوڈ کرنے میں ناکامی:', error);
+            }
+        }
+
+        // اگر Delete بٹن پر کلک ہوا
+        if (event.target.classList.contains('delete-btn')) {
+            alert('ڈیلیٹ کا فیچر ابھی نہیں بنایا گیا!');
+        }
     });
 
     // صفحہ لوڈ ہوتے ہی تمام ٹیمپلیٹس دکھائیں
     document.addEventListener('DOMContentLoaded', fetchAndDisplayTemplates);
 
 </script>
+<style>
+/* بٹنز کے لیے کچھ اضافی اسٹائل */
+.card-actions { margin-top: 15px; }
+.edit-btn, .delete-btn, .cancel-btn {
+    padding: 8px 15px;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    margin: 0 5px;
+}
+.edit-btn { background-color: #3498db; color: white; }
+.delete-btn { background-color: #e74c3c; color: white; }
+.cancel-btn { background-color: #7f8c8d; color: white; margin-top: 10px; width: 100%; }
+</style>
 
     </body>
 </html>
