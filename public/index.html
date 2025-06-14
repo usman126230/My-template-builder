@@ -227,7 +227,8 @@
 
             try {
                 // fetch API کا استعمال کرتے ہوئے بیک اینڈ سرور پر ڈیٹا بھیجیں
-                const response = await fetch('http://localhost:3000/api/create-template', {
+                const response = await fetch('https://my-template-builder-1.onrender.com/api/create-template', {
+
                     method: 'POST',
                     body: formData, // FormData کو body میں بھیجیں
                 });
