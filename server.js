@@ -30,6 +30,8 @@ const Template = mongoose.model('Template', templateSchema);
 // پرانے مڈل ویئر
 app.use(cors());
 app.use(express.static('public'));
+app.use('/uploads', express.static('uploads'));
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
