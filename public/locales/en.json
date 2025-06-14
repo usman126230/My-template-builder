@@ -1,1 +1,17 @@
+{
+  "appTitle": "Create your own template",
+  "searchPlaceholder": "Search templates...",
+  "searchButton": "Search",
+  "createSectionTitle": "Create a new template",
+  "templateTitleLabel": "Template Title (Prompt)",
+  "uploadPhotoLabel": "Upload your photo",
+  "detailedTextLabel": "Write detailed text",
+  "createButton": "Create a template",
+  "updateButton": "Update Template",
+  "cancelButton": "Cancel Edit",
+  "currentTemplatesTitle": "Current templates",
+  "editButton": "Edit",
+  "downloadButton": "Download",
+  "deleteButton": "Delete"
+}
 
