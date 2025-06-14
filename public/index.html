@@ -205,36 +205,59 @@
     });
 
     // گیلری میں بٹن کلکس کو سنبھالنا
-    galleryGrid.addEventListener('click', async function(event) {
-        const target = event.target;
-        if (target.classList.contains('edit-btn')) {
-            const id = target.dataset.id;
+    // گیلری میں بٹن کلکس کو سنبھالنا (Edit اور Delete)
+galleryGrid.addEventListener('click', async function(event) {
+    const target = event.target;
+    const id = target.dataset.id;
+
+    // اگر Edit بٹن پر کلک ہوا
+    if (target.classList.contains('edit-btn')) {
+        try {
+            const response = await fetch(`${API_URL}/api/templates/${id}`);
+            const template = await response.json();
+            titleInput.value = template.title;
+            textInput.value = template.text;
+            editState = { isEditing: true, templateId: id };
+            submitButton.setAttribute('data-translate-key', 'updateButton');
+            submitButton.textContent = translations['updateButton'] || 'Update Template';
+            if (!document.querySelector('.cancel-btn')) {
+                const cancelButton = document.createElement('button');
+                cancelButton.setAttribute('data-translate-key', 'cancelButton');
+                cancelButton.textContent = translations['cancelButton'] || 'Cancel Edit';
+                cancelButton.className = 'cancel-btn';
+                cancelButton.type = 'button';
+                cancelButton.onclick = cancelEditMode;
+                submitButton.after(cancelButton);
+            }
+            window.scrollTo(0, 0);
+        } catch (error) {
+            console.error('ایڈٹ کے لیے ڈیٹا لوڈ کرنے میں ناکامی:', error);
+        }
+    }
+
+    // اگر Delete بٹن پر کلک ہوا (نیا کوڈ)
+    if (target.classList.contains('delete-btn')) {
+        // صارف سے تصدیق طلب کریں
+        if (confirm('کیا آپ واقعی اس ٹیمپلیٹ کو ڈیلیٹ کرنا چاہتے ہیں؟ یہ عمل واپس نہیں ہو سکتا۔')) {
             try {
-                const response = await fetch(`${API_URL}/api/templates/${id}`);
-                const template = await response.json();
-                titleInput.value = template.title;
-                textInput.value = template.text;
-                editState = { isEditing: true, templateId: id };
-                submitButton.setAttribute('data-translate-key', 'updateButton');
-                submitButton.textContent = translations['updateButton'];
-                if (!document.querySelector('.cancel-btn')) {
-                    const cancelButton = document.createElement('button');
-                    cancelButton.setAttribute('data-translate-key', 'cancelButton');
-                    cancelButton.textContent = translations['cancelButton'];
-                    cancelButton.className = 'cancel-btn';
-                    cancelButton.type = 'button';
-                    cancelButton.onclick = cancelEditMode;
-                    submitButton.after(cancelButton);
+                const response = await fetch(`${API_URL}/api/templates/${id}`, {
+                    method: 'DELETE'
+                });
+                const result = await response.json();
+                if (response.ok) {
+                    alert('کامیابی! ' + result.message);
+                    fetchAndDisplayTemplates(); // گیلری کو ریفریش کریں
+                } else {
+                    throw new Error(result.message);
                 }
-                window.scrollTo(0, 0);
             } catch (error) {
-                console.error('Failed to load data for edit:', error);
+                alert('ناکامی: ' + error.message);
+                console.error('ڈیلیٹ کرتے وقت خرابی:', error);
             }
         }
-        if (target.classList.contains('delete-btn')) {
-            alert('Delete feature is not yet implemented!');
-        }
-    });
+    }
+});
+
 
     // --- ابتدائیہ (Initialization) ---
 
