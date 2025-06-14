@@ -216,44 +216,83 @@
     </footer>
 
     <script>
-        document.getElementById('template-form').addEventListener('submit', async function(event) {
-            event.preventDefault(); // فارم کو خودکار سبمٹ ہونے سے روکیں
+    const templateForm = document.getElementById('template-form');
+    const messageDiv = document.getElementById('response-message');
+    const galleryGrid = document.querySelector('.gallery-grid');
+    
+    const API_URL = 'https://my-template-builder-1.onrender.com'; // آپ کا لائیو سرور URL
 
-            const form = event.target;
-            const formData = new FormData(form); // فارم کا تمام ڈیٹا حاصل کریں (تصویر سمیت)
-            const messageDiv = document.getElementById('response-message');
+    // فنکشن: تمام ٹیمپلیٹس کو ڈیٹا بیس سے لانا اور دکھانا
+    async function fetchAndDisplayTemplates() {
+        try {
+            const response = await fetch(`${API_URL}/api/templates`);
+            if (!response.ok) {
+                throw new Error('ڈیٹا لوڈ کرنے میں ناکامی');
+            }
+            const templates = await response.json();
+            
+            // گیلری کو پہلے خالی کریں
+            galleryGrid.innerHTML = ''; 
 
-            messageDiv.style.display = 'none'; // پرانا پیغام چھپا دیں
+            if (templates.length === 0) {
+                galleryGrid.innerHTML = '<p>ابھی تک کوئی ٹیمپلیٹ نہیں بنائی گئی۔</p>';
+                return;
+            }
 
-            try {
-                // fetch API کا استعمال کرتے ہوئے بیک اینڈ سرور پر ڈیٹا بھیجیں
-                const response = await fetch('https://my-template-builder-1.onrender.com/api/create-template', {
+            // ہر ٹیمپلیٹ کے لیے ایک کارڈ بنائیں
+            templates.forEach(template => {
+                const card = document.createElement('div');
+                card.className = 'template-card';
+                card.innerHTML = `
+                    <img src="${template.imageUrl}" alt="${template.title}">
+                    <h3>${template.title}</h3>
+                    <p>${template.text || ''}</p>
+                `;
+                galleryGrid.appendChild(card);
+            });
 
-                    method: 'POST',
-                    body: formData, // FormData کو body میں بھیجیں
-                });
+        } catch (error) {
+            console.error('Error fetching templates:', error);
+            galleryGrid.innerHTML = '<p>ٹیمپلیٹس لوڈ نہیں ہو سکیں۔ براہِ کرم صفحہ ریفریش کریں۔</p>';
+        }
+    }
 
-                const result = await response.json(); // سرور سے آنے والے جواب کو JSON میں تبدیل کریں
+    // فارم جمع کرانے کا ایونٹ
+    templateForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        const formData = new FormData(templateForm);
+        messageDiv.style.display = 'none';
 
-                if (response.ok) {
-                    // اگر جواب ٹھیک ہے
-                    messageDiv.textContent = result.message;
-                    messageDiv.className = 'message success'; // کامیابی کا اسٹائل
-                    form.reset(); // فارم کو خالی کر دیں
-                } else {
-                    // اگر کوئی خرابی ہے
-                    messageDiv.textContent = 'خرابی: ' + result.message;
-                    messageDiv.className = 'message error'; // خرابی کا اسٹائل
-                }
-            } catch (error) {
-                // اگر سرور سے رابطہ ہی نہ ہو پائے
-                console.error('Fetch Error:', error);
-                messageDiv.textContent = 'سرور سے رابطہ کرنے میں ناکامی۔ کیا آپ نے سرور چلایا ہے؟';
+        try {
+            const response = await fetch(`${API_URL}/api/create-template`, {
+                method: 'POST',
+                body: formData,
+            });
+
+            const result = await response.json();
+
+            if (response.ok) {
+                messageDiv.textContent = result.message;
+                messageDiv.className = 'message success';
+                templateForm.reset();
+                fetchAndDisplayTemplates(); // نئی ٹیمپلیٹ بنانے کے بعد گیلری کو ریفریش کریں
+            } else {
+                messageDiv.textContent = 'خرابی: ' + (result.message || 'Unknown error');
                 messageDiv.className = 'message error';
             }
-            
-            messageDiv.style.display = 'block'; // نیا پیغام دکھائیں
-        });
-    </script>
+        } catch (error) {
+            console.error('Fetch Error:', error);
+            messageDiv.textContent = 'سرور سے رابطہ کرنے میں ناکامی۔';
+            messageDiv.className = 'message error';
+        }
+        
+        messageDiv.style.display = 'block';
+    });
+
+    // صفحہ لوڈ ہوتے ہی تمام ٹیمپلیٹس دکھائیں
+    document.addEventListener('DOMContentLoaded', fetchAndDisplayTemplates);
+
+</script>
+
     </body>
 </html>
