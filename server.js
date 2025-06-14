@@ -141,6 +141,28 @@ app.put('/api/templates/:id', upload.single('templateImage'), async (req, res) =
     }
 });
 
+// === ایک ٹیمپلیٹ کو ڈیلیٹ کرنے کے لیے روٹ ===
+app.delete('/api/templates/:id', async (req, res) => {
+    try {
+        // اس ID والی ٹیمپلیٹ کو تلاش کریں اور ڈیٹا بیس سے ڈیلیٹ کر دیں
+        const deletedTemplate = await Template.findByIdAndDelete(req.params.id);
+
+        if (!deletedTemplate) {
+            return res.status(404).json({ message: 'ڈیلیٹ کرنے کے لیے ٹیمپلیٹ نہیں ملی' });
+        }
+
+        // نوٹ: یہاں پرانی تصویر کو 'uploads' فولڈر سے ڈیلیٹ کرنے کا کوڈ بھی لکھا جا سکتا ہے
+        // تاکہ سرور پر جگہ خالی رہے۔ یہ ایک ایڈوانسڈ مرحلہ ہے۔
+
+        res.status(200).json({ message: 'ٹیمپلیٹ کامیابی سے ڈیلیٹ ہو گئی!' });
+
+    } catch (error) {
+        console.error("ٹیمپلیٹ ڈیلیٹ کرتے وقت خرابی:", error);
+        res.status(500).json({ message: 'سرور میں خرابی' });
+    }
+});
+
+
 
 
 // سرور کو شروع کریں
