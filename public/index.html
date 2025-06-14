@@ -1,430 +1,249 @@
 <!DOCTYPE html>
-<html lang="ur" dir="rtl">
+<html lang="en" dir="ltr">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>میرا ٹیمپلیٹ بلڈر</title>
+    <title>Template Builder</title>
     
     <style>
-        /* عمومی اسٹائل */
-        body {
-            font-family: Arial, sans-serif;
-            margin: 0;
-            background-color: #f0f2f5;
-            color: #333;
-        }
-
-        .download-btn {
-    display: inline-block;
-    padding: 8px 15px;
-    background-color: #27ae60; /* سبز رنگ */
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 14px; /* بٹن کے ٹیکسٹ کا سائز */
-    font-family: Arial, sans-serif;
-}
-
-
-        .container {
-            max-width: 1200px;
-            margin: 20px auto;
-            padding: 0 20px;
-        }
-
-        /* ہیڈر اور سرچ بار */
-        header {
-            background-color: #fff;
-            padding: 20px;
-            text-align: center;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-        }
-
-        .search-container {
-            margin-top: 15px;
-            display: flex;
-            justify-content: center;
-        }
-
-        .search-container input {
-            width: 50%;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 20px 0 0 20px;
-            outline: none;
-        }
-
-        .search-container button {
-            padding: 10px 20px;
-            border: none;
-            background-color: #1877f2;
-            color: white;
-            border-radius: 0 20px 20px 0;
-            cursor: pointer;
-        }
-
-        /* ٹیمپلیٹ بلڈر فارم */
-        .template-builder {
-            background: #fff;
-            padding: 30px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 40px;
-        }
-
-        .template-builder h2 {
-            text-align: center;
-            margin-bottom: 20px;
-            color: #1877f2;
-        }
-
-        .form-group {
-            margin-bottom: 15px;
-        }
-
-        .form-group label {
-            display: block;
-            margin-bottom: 5px;
-            font-weight: bold;
-        }
-
-        .form-group input,
-        .form-group textarea {
-            width: 100%;
-            padding: 10px;
-            border: 1px solid #ccc;
-            border-radius: 5px;
-            box-sizing: border-box;
-        }
-
-        .cta-button {
-            width: 100%;
-            padding: 15px;
-            border: none;
-            background-color: #42b72a;
-            color: white;
-            font-size: 1.2rem;
-            font-weight: bold;
-            border-radius: 5px;
-            cursor: pointer;
-        }
-
-        .cta-button:hover {
-            background-color: #36a420;
-        }
-
-        /* ٹیمپلیٹ گیلری */
-        .template-gallery h2 {
-            text-align: center;
-            margin-bottom: 20px;
-        }
-
-        .gallery-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
-            gap: 20px;
-        }
-
-        .template-card {
-            background: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            overflow: hidden;
-            text-align: center;
-        }
-
-        .template-card img {
-            width: 100%;
-            height: 200px;
-            object-fit: cover;
-        }
-
-        .template-card h3 {
-            margin: 15px 0 10px 0;
-        }
-
-        .template-card p {
-            padding: 0 15px 15px 15px;
-            color: #666;
-        }
-        
-        /* پیغام دکھانے کے لیے اسٹائل */
-        .message {
-            text-align: center;
-            padding: 10px;
-            margin-top: 15px;
-            border-radius: 5px;
-            display: none; /* پہلے سے چھپا ہوا */
-        }
-        .message.success {
-            background-color: #d4edda;
-            color: #155724;
-        }
-        .message.error {
-            background-color: #f8d7da;
-            color: #721c24;
-        }
-
-        /* فوٹر */
-        footer {
-            text-align: center;
-            padding: 20px;
-            margin-top: 40px;
-            background-color: #333;
-            color: #fff;
-        }
+        /* آپ کا تمام CSS کوڈ یہاں آئے گا... (اسے تبدیل نہ کریں) */
+        body{font-family:Arial,sans-serif;margin:0;background-color:#f0f2f5;color:#333}.container{max-width:1200px;margin:20px auto;padding:0 20px}header{background-color:#fff;padding:20px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.1);position:relative}.language-switcher{position:absolute;top:10px;right:10px}.language-switcher button{padding:5px 10px;margin-left:5px;border:1px solid #ddd;background-color:#f9f9f9;cursor:pointer}.language-switcher button.active{background-color:#3498db;color:white;border-color:#3498db}.search-container{margin-top:15px;display:flex;justify-content:center}.search-container input{width:50%;padding:10px;border:1px solid #ddd;border-radius:20px 0 0 20px;outline:none}.search-container button{padding:10px 20px;border:none;background-color:#1877f2;color:white;border-radius:0 20px 20px 0;cursor:pointer}.template-builder{background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:40px}.template-builder h2{text-align:center;margin-bottom:20px;color:#1877f2}.form-group{margin-bottom:15px}.form-group label{display:block;margin-bottom:5px;font-weight:bold}.form-group input,.form-group textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}.cta-button{width:100%;padding:15px;border:none;background-color:#42b72a;color:white;font-size:1.2rem;font-weight:bold;border-radius:5px;cursor:pointer}.cta-button:hover{background-color:#36a420}.template-gallery h2{text-align:center;margin-bottom:20px}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}.template-card{background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);overflow:hidden;text-align:center}.template-card img{width:100%;height:200px;object-fit:cover}.template-card h3{margin:15px 0 10px 0}.template-card p{padding:0 15px 15px 15px;color:#666}.message{text-align:center;padding:10px;margin-top:15px;border-radius:5px;display:none}.message.success{background-color:#d4edda;color:#155724}.message.error{background-color:#f8d7da;color:#721c24}footer{text-align:center;padding:20px;margin-top:40px;background-color:#333;color:#fff}.card-actions{margin-top:15px}.edit-btn,.delete-btn,.cancel-btn,.download-btn{padding:8px 15px;border:none;border-radius:5px;cursor:pointer;margin:0 5px;color:white;text-decoration:none;display:inline-block;font-size:14px;font-family:Arial,sans-serif}.edit-btn{background-color:#3498db}.delete-btn{background-color:#e74c3c}.cancel-btn{background-color:#7f8c8d;margin-top:10px;width:100%}.download-btn{background-color:#27ae60}
     </style>
-    </head>
+</head>
 <body>
-
     <header>
-        <h1>اپنا ٹیمپلیٹ خود بنائیں</h1>
+        <div class="language-switcher">
+            <button data-lang="en">English</button>
+            <button data-lang="ur">اردو</button>
+            <button data-lang="ar">العربية</button>
+        </div>
+        <h1 data-translate-key="appTitle">Create your own template</h1>
         <div class="search-container">
-            <input type="text" id="search-bar" placeholder="ٹیمپلیٹس تلاش کریں...">
-            <button>تلاش کریں</button>
+            <input type="text" id="search-bar" data-translate-key-placeholder="searchPlaceholder">
+            <button data-translate-key="searchButton">Search</button>
         </div>
     </header>
 
     <main class="container">
         <div class="template-builder">
-            <h2>نئی ٹیمپلیٹ بنائیں</h2>
+            <h2 data-translate-key="createSectionTitle">Create a new template</h2>
             <form id="template-form">
                 <div class="form-group">
-                    <label for="template-title">ٹیمپلیٹ کا عنوان (Prompt)</label>
+                    <label for="template-title" data-translate-key="templateTitleLabel">Template Title (Prompt)</label>
                     <input type="text" id="template-title" name="title" required>
                 </div>
                 <div class="form-group">
-                    <label for="template-image">اپنی تصویر اپلوڈ کریں</label>
-                    <input type="file" id="template-image" name="templateImage" accept="image/*" required>
+                    <label for="template-image" data-translate-key="uploadPhotoLabel">Upload your photo</label>
+                    <input type="file" id="template-image" name="templateImage" accept="image/*">
                 </div>
                 <div class="form-group">
-                    <label for="template-text">تفصیلی متن لکھیں</label>
+                    <label for="template-text" data-translate-key="detailedTextLabel">Write detailed text</label>
                     <textarea id="template-text" name="text" rows="6"></textarea>
                 </div>
-                <button type="submit" class="cta-button">ٹیمپلیٹ بنائیں</button>
+                <button type="submit" class="cta-button" data-translate-key="createButton">Create a template</button>
             </form>
             <div id="response-message" class="message"></div>
         </div>
 
         <div class="template-gallery">
-            <h2>موجودہ ٹیمپلیٹس</h2>
+            <h2 data-translate-key="currentTemplatesTitle">Current templates</h2>
             <div class="gallery-grid">
-                <div class="template-card">
-                    <img src="https://via.placeholder.com/300x200" alt="ٹیمپلیٹ کی تصویر">
-                    <h3>مثالی ٹیمپلیٹ</h3>
-                    <p>یہاں ٹیمپلیٹ کی مختصر تفصیل آئے گی۔</p>
                 </div>
-                <div class="template-card">
-                    <img src="https://via.placeholder.com/300x200" alt="ٹیمپلیٹ کی تصویر">
-                    <h3>کاروباری ٹیمپلیٹ</h3>
-                    <p>یہ کارڈ ایک کاروباری ویب سائٹ کے لیے ہے۔</p>
-                </div>
-            </div>
         </div>
     </main>
 
     <footer>
-        <p>&copy; 2025 - ٹیمپلیٹ بلڈر</p>
+        <p>&copy; 2025 - Template Builder</p>
     </footer>
 
     <script>
+    // --- بنیادی متغیرات (Variables) ---
     const templateForm = document.getElementById('template-form');
     const titleInput = document.getElementById('template-title');
     const textInput = document.getElementById('template-text');
     const imageInput = document.getElementById('template-image');
     const submitButton = templateForm.querySelector('.cta-button');
-    
     const messageDiv = document.getElementById('response-message');
     const galleryGrid = document.querySelector('.gallery-grid');
-    
+    const langButtons = document.querySelectorAll('.language-switcher button');
     const API_URL = 'https://my-template-builder-1.onrender.com';
+    let editState = { isEditing: false, templateId: null };
+    let translations = {};
 
-    // یہ متغیر یاد رکھے گا کہ ہم ایڈٹ موڈ میں ہیں یا نہیں
-    let editState = {
-        isEditing: false,
-        templateId: null
-    };
+    // --- زبان کے فنکشنز ---
 
-    // --- فنکشنز ---
+    // فنکشن: صفحہ کا ترجمہ کرنا
+    async function translatePage() {
+        // تمام 'data-translate-key' والے عناصر کو تلاش کریں
+        document.querySelectorAll('[data-translate-key]').forEach(element => {
+            const key = element.getAttribute('data-translate-key');
+            element.textContent = translations[key] || element.textContent;
+        });
+        // پلیس ہولڈر والے عناصر کو الگ سے ترجمہ کریں
+        document.querySelectorAll('[data-translate-key-placeholder]').forEach(element => {
+            const key = element.getAttribute('data-translate-key-placeholder');
+            element.placeholder = translations[key] || element.placeholder;
+        });
+        // صفحہ کا عنوان بھی ترجمہ کریں
+        document.title = translations['appTitle'] || 'Template Builder';
+    }
 
+    // فنکشن: زبان سیٹ کرنا
+    async function setLanguage(lang) {
+        try {
+            const response = await fetch(`/locales/${lang}.json`);
+            translations = await response.json();
+            
+            // زبان اور سمت سیٹ کریں
+            document.documentElement.lang = lang;
+            document.documentElement.dir = (lang === 'ur' || lang === 'ar') ? 'rtl' : 'ltr';
+
+            await translatePage();
+
+            // بٹنوں پر 'active' کلاس لگائیں
+            langButtons.forEach(btn => {
+                btn.classList.toggle('active', btn.dataset.lang === lang);
+            });
+
+            localStorage.setItem('language', lang);
+        } catch (error) {
+            console.error(`Could not load language: ${lang}`, error);
+        }
+    }
+    
+    // --- ڈیٹا کے فنکشنز ---
+    
     // فنکشن: تمام ٹیمپلیٹس کو لانا اور دکھانا
     async function fetchAndDisplayTemplates() {
         try {
             const response = await fetch(`${API_URL}/api/templates`);
             const templates = await response.json();
-            
-            galleryGrid.innerHTML = ''; 
-
+            galleryGrid.innerHTML = '';
             if (templates.length === 0) {
-                galleryGrid.innerHTML = '<p>ابھی تک کوئی ٹیمپلیٹ نہیں بنائی گئی۔</p>';
+                galleryGrid.innerHTML = '<p>No templates created yet.</p>';
                 return;
             }
-
             templates.forEach(template => {
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 card.innerHTML = `
                     <img src="${API_URL}/${template.imageUrl}" alt="${template.title}">
-
                     <h3>${template.title}</h3>
                     <p>${template.text || ''}</p>
                     <div class="card-actions">
-    <button class="edit-btn" data-id="${template._id}">Edit</button>
-    <a href="${API_URL}/${template.imageUrl}" class="download-btn" download>Download</a>
-    <button class="delete-btn" data-id="${template._id}">Delete</button>
-</div>
-
+                        <button class="edit-btn" data-id="${template._id}" data-translate-key="editButton">Edit</button>
+                        <a href="${API_URL}/${template.imageUrl}" class="download-btn" download data-translate-key="downloadButton">Download</a>
+                        <button class="delete-btn" data-id="${template._id}" data-translate-key="deleteButton">Delete</button>
+                    </div>
                 `;
                 galleryGrid.appendChild(card);
             });
-
+            await translatePage(); // گیلری لوڈ ہونے کے بعد دوبارہ ترجمہ کریں
         } catch (error) {
             console.error('Error fetching templates:', error);
-            galleryGrid.innerHTML = '<p>ٹیمپلیٹس لوڈ نہیں ہو سکیں۔</p>';
         }
     }
-
+    
     // فنکشن: ایڈٹ موڈ کو منسوخ کرنا
     function cancelEditMode() {
         editState.isEditing = false;
         editState.templateId = null;
-        
         templateForm.reset();
-        submitButton.textContent = 'Create a template';
-        
-        // اگر کینسل بٹن موجود ہے تو اسے ہٹا دیں
+        submitButton.setAttribute('data-translate-key', 'createButton');
+        submitButton.textContent = translations['createButton'];
         const cancelButton = document.querySelector('.cancel-btn');
-        if (cancelButton) {
-            cancelButton.remove();
-        }
+        if (cancelButton) cancelButton.remove();
     }
 
     // --- ایونٹ ہینڈلرز ---
 
-    // فارم جمع کرانے کا ایونٹ (یہ اب 'Create' اور 'Update' دونوں کو سنبھالے گا)
-    // فارم جمع کرانے کا ایونٹ (یہ اب 'Create' اور 'Update' دونوں کو سنبھالے گا)
-templateForm.addEventListener('submit', async function(event) {
-    event.preventDefault();
-    messageDiv.style.display = 'none';
+    // زبان کے بٹنوں پر کلک کا ایونٹ
+    langButtons.forEach(button => {
+        button.addEventListener('click', () => {
+            setLanguage(button.dataset.lang);
+        });
+    });
 
-    // اگر ایڈٹ موڈ میں ہیں تو PUT ریکویسٹ بھیجیں
-    if (editState.isEditing) {
-        // اب ہم FormData استعمال کریں گے تاکہ تصویر بھی بھیج سکیں
+    // فارم جمع کرانے کا ایونٹ
+    templateForm.addEventListener('submit', async function(event) {
+        event.preventDefault();
+        messageDiv.style.display = 'none';
         const formData = new FormData();
         formData.append('title', titleInput.value);
         formData.append('text', textInput.value);
-        
-        // اگر صارف نے کوئی نئی تصویر منتخب کی ہے تو اسے شامل کریں
-        if (imageInput.files[0]) {
+
+        let url, method;
+        if (editState.isEditing) {
+            url = `${API_URL}/api/templates/${editState.templateId}`;
+            method = 'PUT';
+            if (imageInput.files[0]) {
+                formData.append('templateImage', imageInput.files[0]);
+            }
+        } else {
+            url = `${API_URL}/api/create-template`;
+            method = 'POST';
             formData.append('templateImage', imageInput.files[0]);
         }
 
         try {
-            const response = await fetch(`${API_URL}/api/templates/${editState.templateId}`, {
-                method: 'PUT',
-                body: formData // اب JSON کی جگہ FormData بھیجیں
-            });
+            const response = await fetch(url, { method, body: formData });
             const result = await response.json();
-            
             if (response.ok) {
                 messageDiv.textContent = result.message;
                 messageDiv.className = 'message success';
-                cancelEditMode();
-                fetchAndDisplayTemplates();
+                if (editState.isEditing) cancelEditMode();
+                else templateForm.reset();
+                await fetchAndDisplayTemplates();
             } else {
                 throw new Error(result.message);
             }
         } catch (error) {
-            messageDiv.textContent = 'اپ ڈیٹ ناکام: ' + error.message;
+            messageDiv.textContent = 'Operation failed: ' + error.message;
             messageDiv.className = 'message error';
         }
-    
-    } else { // اگر نیا بنا رہے ہیں تو POST ریکویسٹ بھیجیں
-        const formData = new FormData(templateForm);
-        try {
-            const response = await fetch(`${API_URL}/api/create-template`, {
-                method: 'POST',
-                body: formData,
-            });
-            const result = await response.json();
+        messageDiv.style.display = 'block';
+    });
 
-            if (response.ok) {
-                messageDiv.textContent = result.message;
-                messageDiv.className = 'message success';
-                templateForm.reset();
-                fetchAndDisplayTemplates();
-            } else {
-                throw new Error(result.message);
-            }
-        } catch (error) {
-            messageDiv.textContent = 'بنانے میں ناکامی: ' + error.message;
-            messageDiv.className = 'message error';
-        }
-    }
-    
-    messageDiv.style.display = 'block';
-});
-
-
-    // گیلری میں بٹن کلکس کو سنبھالنا (Edit اور Delete)
+    // گیلری میں بٹن کلکس کو سنبھالنا
     galleryGrid.addEventListener('click', async function(event) {
-        // اگر Edit بٹن پر کلک ہوا
-        if (event.target.classList.contains('edit-btn')) {
-            const id = event.target.dataset.id;
+        const target = event.target;
+        if (target.classList.contains('edit-btn')) {
+            const id = target.dataset.id;
             try {
                 const response = await fetch(`${API_URL}/api/templates/${id}`);
                 const template = await response.json();
-                
-                // فارم میں پرانا ڈیٹا بھریں
                 titleInput.value = template.title;
                 textInput.value = template.text;
-                
-                // ایڈٹ موڈ کو فعال کریں
-                editState.isEditing = true;
-                editState.templateId = id;
-                submitButton.textContent = 'Update Template';
-                
-                // کینسل بٹن شامل کریں (اگر پہلے سے موجود نہیں)
+                editState = { isEditing: true, templateId: id };
+                submitButton.setAttribute('data-translate-key', 'updateButton');
+                submitButton.textContent = translations['updateButton'];
                 if (!document.querySelector('.cancel-btn')) {
                     const cancelButton = document.createElement('button');
-                    cancelButton.textContent = 'Cancel Edit';
+                    cancelButton.setAttribute('data-translate-key', 'cancelButton');
+                    cancelButton.textContent = translations['cancelButton'];
                     cancelButton.className = 'cancel-btn';
-                    cancelButton.type = 'button'; // فارم کو سبمٹ ہونے سے روکنے کے لیے
-                    cancelButton.onclick = cancelEditMode; // کلک پر کینسل فنکشن چلائیں
+                    cancelButton.type = 'button';
+                    cancelButton.onclick = cancelEditMode;
                     submitButton.after(cancelButton);
                 }
-                
-                window.scrollTo(0, 0); // صفحہ کے اوپر سکرول کریں
-                
+                window.scrollTo(0, 0);
             } catch (error) {
-                console.error('ایڈٹ کے لیے ڈیٹا لوڈ کرنے میں ناکامی:', error);
+                console.error('Failed to load data for edit:', error);
             }
         }
-
-        // اگر Delete بٹن پر کلک ہوا
-        if (event.target.classList.contains('delete-btn')) {
-            alert('ڈیلیٹ کا فیچر ابھی نہیں بنایا گیا!');
+        if (target.classList.contains('delete-btn')) {
+            alert('Delete feature is not yet implemented!');
         }
     });
 
-    // صفحہ لوڈ ہوتے ہی تمام ٹیمپلیٹس دکھائیں
-    document.addEventListener('DOMContentLoaded', fetchAndDisplayTemplates);
+    // --- ابتدائیہ (Initialization) ---
 
-</script>
-<style>
-/* بٹنز کے لیے کچھ اضافی اسٹائل */
-.card-actions { margin-top: 15px; }
-.edit-btn, .delete-btn, .cancel-btn {
-    padding: 8px 15px;
-    border: none;
-    border-radius: 5px;
-    cursor: pointer;
-    margin: 0 5px;
-}
-.edit-btn { background-color: #3498db; color: white; }
-.delete-btn { background-color: #e74c3c; color: white; }
-.cancel-btn { background-color: #7f8c8d; color: white; margin-top: 10px; width: 100%; }
-</style>
-
-    </body>
+    // صفحہ لوڈ ہوتے ہی زبان اور ٹیمپلیٹس سیٹ کریں
+    document.addEventListener('DOMContentLoaded', () => {
+        const savedLanguage = localStorage.getItem('language') || 'en';
+        setLanguage(savedLanguage);
+        fetchAndDisplayTemplates();
+    });
+    </script>
+</body>
 </html>
