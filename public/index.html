@@ -288,63 +288,69 @@
     // --- ایونٹ ہینڈلرز ---
 
     // فارم جمع کرانے کا ایونٹ (یہ اب 'Create' اور 'Update' دونوں کو سنبھالے گا)
-    templateForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        messageDiv.style.display = 'none';
+    // فارم جمع کرانے کا ایونٹ (یہ اب 'Create' اور 'Update' دونوں کو سنبھالے گا)
+templateForm.addEventListener('submit', async function(event) {
+    event.preventDefault();
+    messageDiv.style.display = 'none';
 
-        // اگر ایڈٹ موڈ میں ہیں تو PUT ریکویسٹ بھیجیں
-        if (editState.isEditing) {
-            const updatedData = {
-                title: titleInput.value,
-                text: textInput.value
-            };
-
-            try {
-                const response = await fetch(`${API_URL}/api/templates/${editState.templateId}`, {
-                    method: 'PUT',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(updatedData)
-                });
-                const result = await response.json();
-                
-                if (response.ok) {
-                    messageDiv.textContent = result.message;
-                    messageDiv.className = 'message success';
-                    cancelEditMode(); // فارم کو ری سیٹ کریں
-                    fetchAndDisplayTemplates(); // گیلری ریفریش کریں
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (error) {
-                messageDiv.textContent = 'اپ ڈیٹ ناکام: ' + error.message;
-                messageDiv.className = 'message error';
-            }
+    // اگر ایڈٹ موڈ میں ہیں تو PUT ریکویسٹ بھیجیں
+    if (editState.isEditing) {
+        // اب ہم FormData استعمال کریں گے تاکہ تصویر بھی بھیج سکیں
+        const formData = new FormData();
+        formData.append('title', titleInput.value);
+        formData.append('text', textInput.value);
         
-        } else { // اگر نیا بنا رہے ہیں تو POST ریکویسٹ بھیجیں
-            const formData = new FormData(templateForm);
-            try {
-                const response = await fetch(`${API_URL}/api/create-template`, {
-                    method: 'POST',
-                    body: formData,
-                });
-                const result = await response.json();
-
-                if (response.ok) {
-                    messageDiv.textContent = result.message;
-                    messageDiv.className = 'message success';
-                    templateForm.reset();
-                    fetchAndDisplayTemplates();
-                } else {
-                    throw new Error(result.message);
-                }
-            } catch (error) {
-                messageDiv.textContent = 'بنانے میں ناکامی: ' + error.message;
-                messageDiv.className = 'message error';
-            }
+        // اگر صارف نے کوئی نئی تصویر منتخب کی ہے تو اسے شامل کریں
+        if (imageInput.files[0]) {
+            formData.append('templateImage', imageInput.files[0]);
         }
-        
-        messageDiv.style.display = 'block';
-    });
+
+        try {
+            const response = await fetch(`${API_URL}/api/templates/${editState.templateId}`, {
+                method: 'PUT',
+                body: formData // اب JSON کی جگہ FormData بھیجیں
+            });
+            const result = await response.json();
+            
+            if (response.ok) {
+                messageDiv.textContent = result.message;
+                messageDiv.className = 'message success';
+                cancelEditMode();
+                fetchAndDisplayTemplates();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            messageDiv.textContent = 'اپ ڈیٹ ناکام: ' + error.message;
+            messageDiv.className = 'message error';
+        }
+    
+    } else { // اگر نیا بنا رہے ہیں تو POST ریکویسٹ بھیجیں
+        const formData = new FormData(templateForm);
+        try {
+            const response = await fetch(`${API_URL}/api/create-template`, {
+                method: 'POST',
+                body: formData,
+            });
+            const result = await response.json();
+
+            if (response.ok) {
+                messageDiv.textContent = result.message;
+                messageDiv.className = 'message success';
+                templateForm.reset();
+                fetchAndDisplayTemplates();
+            } else {
+                throw new Error(result.message);
+            }
+        } catch (error) {
+            messageDiv.textContent = 'بنانے میں ناکامی: ' + error.message;
+            messageDiv.className = 'message error';
+        }
+    }
+    
+    messageDiv.style.display = 'block';
+});
+
 
     // گیلری میں بٹن کلکس کو سنبھالنا (Edit اور Delete)
     galleryGrid.addEventListener('click', async function(event) {
