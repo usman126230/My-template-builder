@@ -41,4 +41,7 @@ app.post('/api/create-template', upload.single('templateImage'), (req, res) => {
 
 app.listen(PORT, () => {
     console.log(`سرور پورٹ ${PORT} پر چل رہا ہے`);
+    console.log("فرنٹ اینڈ سے درخواستوں کا انتظار ہے۔۔۔");
+});
+
 });
