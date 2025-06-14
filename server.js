@@ -78,6 +78,18 @@ app.post('/api/create-template', upload.single('templateImage'), async (req, res
         res.status(500).json({ message: 'سرور میں خرابی کی وجہ سے ڈیٹا محفوظ نہیں ہو سکا' });
     }
 });
+// === تمام ٹیمپلیٹس حاصل کرنے کے لیے نیا API روٹ ===
+app.get('/api/templates', async (req, res) => {
+    try {
+        // ڈیٹا بیس سے تمام ٹیمپلیٹس تلاش کریں، اور انہیں تاریخ کے مطابق ترتیب دیں (سب سے نئی پہلے)
+        const templates = await Template.find().sort({ createdAt: -1 });
+        res.status(200).json(templates);
+    } catch (error) {
+        console.error("ڈیٹا حاصل کرتے وقت خرابی:", error);
+        res.status(500).json({ message: 'سرور سے ڈیٹا حاصل نہیں کیا جا سکا' });
+    }
+});
+
 
 // سرور کو شروع کریں
 app.listen(PORT, () => {
