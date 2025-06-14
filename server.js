@@ -12,6 +12,10 @@ const PORT = 3000; // ہمارا سرور اس پورٹ پر چلے گا
 // یہ آپ کے فرنٹ اینڈ (جو فائل سے کھولا گیا ہے) کو بیک اینڈ سے بات کرنے کی اجازت دے گا
 app.use(cors());
 
+// public فولڈر کو جامد فائلوں کے لیے استعمال کریں
+app.use(express.static('public')); 
+
+
 // Multer کو سیٹ اپ کریں تاکہ یہ تصاویر کو 'uploads' فولڈر میں محفوظ کر سکے
 const storage = multer.diskStorage({
     destination: function (req, file, cb) {
@@ -31,9 +35,7 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // ایک بنیادی روٹ یہ چیک کرنے کے لیے کہ سرور چل رہا ہے
-app.get('/', (req, res) => {
-    res.send('بیک اینڈ سرور کامیابی سے چل رہا ہے!');
-});
+
 
 // ٹیمپلیٹ بنانے کے لیے API روٹ
 // 'templateImage' وہی نام ہے جو HTML فارم میں input فیلڈ کا ہے
