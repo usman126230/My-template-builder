@@ -111,20 +111,27 @@ app.get('/api/templates/:id', async (req, res) => {
 });
 
 // === ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کے لیے روٹ (ID کی بنیاد پر) ===
-app.put('/api/templates/:id', async (req, res) => {
+// === ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کے لیے نیا اور بہتر روٹ ===
+app.put('/api/templates/:id', upload.single('templateImage'), async (req, res) => {
     try {
-        const { title, text } = req.body; // فارم سے نیا عنوان اور متن حاصل کریں
+        const { title, text } = req.body;
+        const template = await Template.findById(req.params.id);
 
-        // اس ID والی ٹیمپلیٹ کو تلاش کریں اور اسے نئی معلومات سے اپ ڈیٹ کریں
-        const updatedTemplate = await Template.findByIdAndUpdate(
-            req.params.id, 
-            { title, text }, 
-            { new: true } // یہ آپشن اپ ڈیٹ شدہ ٹیمپلیٹ واپس کرتا ہے
-        );
-
-        if (!updatedTemplate) {
+        if (!template) {
             return res.status(404).json({ message: 'اپ ڈیٹ کرنے کے لیے ٹیمپلیٹ نہیں ملی' });
         }
+
+        // اپ ڈیٹ کرنے کے لیے نئی معلومات تیار کریں
+        template.title = title;
+        template.text = text;
+        
+        // اگر کوئی نئی فائل اپلوڈ ہوئی ہے، تو تصویر کا راستہ بھی اپ ڈیٹ کریں
+        if (req.file) {
+            template.imageUrl = req.file.path;
+        }
+
+        // اپ ڈیٹ شدہ ٹیمپلیٹ کو ڈیٹا بیس میں محفوظ کریں
+        const updatedTemplate = await template.save();
 
         res.status(200).json({ message: 'ٹیمپلیٹ کامیابی سے اپ ڈیٹ ہو گئی!', data: updatedTemplate });
 
@@ -133,6 +140,7 @@ app.put('/api/templates/:id', async (req, res) => {
         res.status(500).json({ message: 'سرور میں خرابی' });
     }
 });
+
 
 
 // سرور کو شروع کریں
