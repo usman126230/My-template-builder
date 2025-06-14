@@ -1,7 +1,7 @@
 {
   "name": "template-builder-backend",
   "version": "1.0.0",
-  "description": "A backend for my template builder application",
+  "description": "A web application for building templates",
   "main": "server.js",
   "scripts": {
     "start": "node server.js",
