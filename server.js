@@ -91,6 +91,48 @@ app.get('/api/templates', async (req, res) => {
         res.status(500).json({ message: 'سرور سے ڈیٹا حاصل نہیں کیا جا سکا' });
     }
 });
+// === ایک مخصوص ٹیمپلیٹ حاصل کرنے کے لیے روٹ (ID کی بنیاد پر) ===
+app.get('/api/templates/:id', async (req, res) => {
+    try {
+        const template = await Template.findById(req.params.id);
+        
+        // اگر اس ID کے ساتھ کوئی ٹیمپلیٹ نہ ملے
+        if (!template) {
+            return res.status(404).json({ message: 'ٹیمپلیٹ نہیں ملی' });
+        }
+        
+        // اگر مل جائے تو اسے واپس بھیج دیں
+        res.status(200).json(template);
+
+    } catch (error) {
+        console.error("ایک ٹیمپلیٹ حاصل کرتے وقت خرابی:", error);
+        res.status(500).json({ message: 'سرور میں خرابی' });
+    }
+});
+
+// === ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کے لیے روٹ (ID کی بنیاد پر) ===
+app.put('/api/templates/:id', async (req, res) => {
+    try {
+        const { title, text } = req.body; // فارم سے نیا عنوان اور متن حاصل کریں
+
+        // اس ID والی ٹیمپلیٹ کو تلاش کریں اور اسے نئی معلومات سے اپ ڈیٹ کریں
+        const updatedTemplate = await Template.findByIdAndUpdate(
+            req.params.id, 
+            { title, text }, 
+            { new: true } // یہ آپشن اپ ڈیٹ شدہ ٹیمپلیٹ واپس کرتا ہے
+        );
+
+        if (!updatedTemplate) {
+            return res.status(404).json({ message: 'اپ ڈیٹ کرنے کے لیے ٹیمپلیٹ نہیں ملی' });
+        }
+
+        res.status(200).json({ message: 'ٹیمپلیٹ کامیابی سے اپ ڈیٹ ہو گئی!', data: updatedTemplate });
+
+    } catch (error) {
+        console.error("ٹیمپلیٹ اپ ڈیٹ کرتے وقت خرابی:", error);
+        res.status(500).json({ message: 'سرور میں خرابی' });
+    }
+});
 
 
 // سرور کو شروع کریں
