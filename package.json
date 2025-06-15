@@ -1,21 +1,19 @@
 {
-  "name": "template-builder-backend",
+  "name": "ai-template-builder",
   "version": "1.0.0",
-  "description": "A web application for building templates",
+  "description": "AI Template Builder Application",
   "main": "server.js",
   "scripts": {
-    "start": "node server.js",
-    "test": "echo \"Error: no test specified\" && exit 1"
+    "start": "node server.js"
   },
   "author": "",
   "license": "ISC",
   "dependencies": {
-  "axios": "^1.7.2",
-  "cloudinary": "^2.2.0",
-  "cors": "^2.8.5",
-  "express": "^4.19.2",
-  "mongoose": "^8.4.1",
-  "multer": "^1.4.5-lts.1"
-},
-
+    "axios": "^1.7.2",
+    "cloudinary": "^2.2.0",
+    "cors": "^2.8.5",
+    "express": "^4.19.2",
+    "mongoose": "^8.4.1",
+    "multer": "^1.4.5-lts.1"
+  }
 }
