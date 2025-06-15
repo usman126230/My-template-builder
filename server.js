@@ -1,169 +1,127 @@
 const express = require('express');
-const multer = require('multer');
-const path = require('path');
+const mongoose = require('mongoose');
 const cors = require('cors');
-const mongoose = require('mongoose'); // Mongoose کو شامل کریں
+const path = require('path');
+const fs = require('fs'); // فائل سسٹم کے ساتھ کام کرنے کے لیے
+const axios = require('axios'); // API کالز کے لیے
 
 const app = express();
 const PORT = process.env.PORT || 3000;
 
 // === ڈیٹا بیس سے کنکشن ===
-const mongoUri = process.env.MONGO_URI; // Render کے Environment Variable سے کنکشن سٹرنگ حاصل کریں
-
-mongoose.connect(mongoUri)
+mongoose.connect(process.env.MONGO_URI)
     .then(() => console.log("ڈیٹا بیس سے کنکشن کامیاب ہو گیا!"))
     .catch(err => console.error("ڈیٹا بیس سے کنکشن ناکام:", err));
 
-// === ٹیمپلیٹ کا ڈھانچہ (Schema) بنانا ===
-// یہ ہمارے ڈیٹا بیس کو بتاتا ہے کہ ہر ٹیمپلیٹ میں کیا معلومات ہوں گی
+// === ٹیمپلیٹ کا ڈھانچہ (Schema) ===
 const templateSchema = new mongoose.Schema({
     title: { type: String, required: true },
     text: String,
     imageUrl: { type: String, required: true },
     createdAt: { type: Date, default: Date.now }
 });
-
-// اسکیما سے ماڈل بنانا
 const Template = mongoose.model('Template', templateSchema);
 
-
-// پرانے مڈل ویئر
+// === مڈل ویئر ===
 app.use(cors());
 app.use(express.static('public'));
 app.use('/uploads', express.static('uploads'));
-
 app.use(express.json());
-app.use(express.urlencoded({ extended: true }));
 
-// 'uploads' فولڈر کو تصاویر محفوظ کرنے کے لیے سیٹ اپ کریں
-const storage = multer.diskStorage({
-    destination: function (req, file, cb) {
-        cb(null, 'uploads/');
-    },
-    filename: function (req, file, cb) {
-        cb(null, Date.now() + '-' + file.originalname);
-    }
-});
+// === API روٹس ===
 
-const upload = multer({ storage: storage });
-
-// === API روٹ کو اپ ڈیٹ کرنا تاکہ وہ ڈیٹا بیس میں محفوظ کرے ===
-app.post('/api/create-template', upload.single('templateImage'), async (req, res) => {
-    
+// --- AI سے ٹیمپلیٹ بنانے کا نیا روٹ ---
+app.post('/api/generate-template', async (req, res) => {
     const { title, text } = req.body;
-    const imageFile = req.file;
 
-    if (!title || !imageFile) {
-        return res.status(400).json({ message: 'عنوان اور تصویر دونوں ضروری ہیں' });
+    if (!title) {
+        return res.status(400).json({ message: 'ٹیمپلیٹ کا عنوان ضروری ہے' });
     }
 
     try {
-        // ایک نئی ٹیمپلیٹ بنائیں
+        // 1. Stability AI API کو کال کریں
+        const engineId = 'stable-diffusion-v1-6';
+        const apiHost = 'https://api.stability.ai';
+        const apiKey = process.env.STABILITY_API_KEY;
+
+        if (!apiKey) throw new Error('Stability AI API key موجود نہیں ہے');
+
+        const response = await axios.post(
+            `${apiHost}/v1/generation/${engineId}/text-to-image`,
+            {
+                text_prompts: [{ text: title }],
+                cfg_scale: 7,
+                height: 512,
+                width: 512,
+                steps: 30,
+                samples: 1,
+            },
+            {
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+            }
+        );
+
+        const image = response.data.artifacts[0];
+        const imagePath = `uploads/${Date.now()}.png`;
+
+        // 2. موصول شدہ تصویر کو سرور پر محفوظ کریں
+        fs.writeFileSync(path.join(__dirname, imagePath), Buffer.from(image.base64, 'base64'));
+
+        // 3. نئی ٹیمپلیٹ کی معلومات ڈیٹا بیس میں محفوظ کریں
         const newTemplate = new Template({
             title: title,
             text: text,
-            imageUrl: imageFile.path // تصویر کا راستہ
+            imageUrl: imagePath
         });
-
-        // اسے ڈیٹا بیس میں محفوظ کریں
         await newTemplate.save();
         
-        console.log('نئی ٹیمپلیٹ ڈیٹا بیس میں محفوظ ہو گئی:', newTemplate);
-
-        res.status(201).json({ 
-            message: 'ٹیمپلیٹ کامیابی سے ڈیٹا بیس میں محفوظ ہو گئی!',
-            data: newTemplate
-        });
+        console.log('AI سے بنی نئی ٹیمپلیٹ ڈیٹا بیس میں محفوظ ہو گئی');
+        res.status(201).json({ message: 'AI ٹیمپلیٹ کامیابی سے بن گئی!', data: newTemplate });
 
     } catch (error) {
-        console.error("ڈیٹا محفوظ کرتے وقت خرابی:", error);
-        res.status(500).json({ message: 'سرور میں خرابی کی وجہ سے ڈیٹا محفوظ نہیں ہو سکا' });
+        console.error("AI جنریشن میں خرابی:", error.response ? error.response.data : error.message);
+        res.status(500).json({ message: 'AI سے تصویر بنانے میں ناکامی' });
     }
 });
-// === تمام ٹیمپلیٹس حاصل کرنے کے لیے نیا API روٹ ===
+
+// --- باقی تمام روٹس ویسے ہی رہیں گے ---
+
+// تمام ٹیمپلیٹس حاصل کرنے کا روٹ
 app.get('/api/templates', async (req, res) => {
     try {
-        // ڈیٹا بیس سے تمام ٹیمپلیٹس تلاش کریں، اور انہیں تاریخ کے مطابق ترتیب دیں (سب سے نئی پہلے)
         const templates = await Template.find().sort({ createdAt: -1 });
         res.status(200).json(templates);
     } catch (error) {
-        console.error("ڈیٹا حاصل کرتے وقت خرابی:", error);
-        res.status(500).json({ message: 'سرور سے ڈیٹا حاصل نہیں کیا جا سکا' });
-    }
-});
-// === ایک مخصوص ٹیمپلیٹ حاصل کرنے کے لیے روٹ (ID کی بنیاد پر) ===
-app.get('/api/templates/:id', async (req, res) => {
-    try {
-        const template = await Template.findById(req.params.id);
-        
-        // اگر اس ID کے ساتھ کوئی ٹیمپلیٹ نہ ملے
-        if (!template) {
-            return res.status(404).json({ message: 'ٹیمپلیٹ نہیں ملی' });
-        }
-        
-        // اگر مل جائے تو اسے واپس بھیج دیں
-        res.status(200).json(template);
-
-    } catch (error) {
-        console.error("ایک ٹیمپلیٹ حاصل کرتے وقت خرابی:", error);
-        res.status(500).json({ message: 'سرور میں خرابی' });
+        res.status(500).json({ message: 'ڈیٹا حاصل نہیں کیا جا سکا' });
     }
 });
 
-// === ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کے لیے روٹ (ID کی بنیاد پر) ===
-// === ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کے لیے نیا اور بہتر روٹ ===
-app.put('/api/templates/:id', upload.single('templateImage'), async (req, res) => {
+// ایک ٹیمپلیٹ کو اپ ڈیٹ کرنے کا روٹ (تصویر کے بغیر)
+app.put('/api/templates/:id', async (req, res) => {
     try {
         const { title, text } = req.body;
-        const template = await Template.findById(req.params.id);
-
-        if (!template) {
-            return res.status(404).json({ message: 'اپ ڈیٹ کرنے کے لیے ٹیمپلیٹ نہیں ملی' });
-        }
-
-        // اپ ڈیٹ کرنے کے لیے نئی معلومات تیار کریں
-        template.title = title;
-        template.text = text;
-        
-        // اگر کوئی نئی فائل اپلوڈ ہوئی ہے، تو تصویر کا راستہ بھی اپ ڈیٹ کریں
-        if (req.file) {
-            template.imageUrl = req.file.path;
-        }
-
-        // اپ ڈیٹ شدہ ٹیمپلیٹ کو ڈیٹا بیس میں محفوظ کریں
-        const updatedTemplate = await template.save();
-
-        res.status(200).json({ message: 'ٹیمپلیٹ کامیابی سے اپ ڈیٹ ہو گئی!', data: updatedTemplate });
-
+        const updatedTemplate = await Template.findByIdAndUpdate(req.params.id, { title, text }, { new: true });
+        if (!updatedTemplate) return res.status(404).json({ message: 'ٹیمپلیٹ نہیں ملی' });
+        res.status(200).json({ message: 'ٹیمپلیٹ اپ ڈیٹ ہو گئی!', data: updatedTemplate });
     } catch (error) {
-        console.error("ٹیمپلیٹ اپ ڈیٹ کرتے وقت خرابی:", error);
-        res.status(500).json({ message: 'سرور میں خرابی' });
+        res.status(500).json({ message: 'اپ ڈیٹ کرتے وقت خرابی' });
     }
 });
 
-// === ایک ٹیمپلیٹ کو ڈیلیٹ کرنے کے لیے روٹ ===
+// ایک ٹیمپلیٹ کو ڈیلیٹ کرنے کا روٹ
 app.delete('/api/templates/:id', async (req, res) => {
     try {
-        // اس ID والی ٹیمپلیٹ کو تلاش کریں اور ڈیٹا بیس سے ڈیلیٹ کر دیں
         const deletedTemplate = await Template.findByIdAndDelete(req.params.id);
-
-        if (!deletedTemplate) {
-            return res.status(404).json({ message: 'ڈیلیٹ کرنے کے لیے ٹیمپلیٹ نہیں ملی' });
-        }
-
-        // نوٹ: یہاں پرانی تصویر کو 'uploads' فولڈر سے ڈیلیٹ کرنے کا کوڈ بھی لکھا جا سکتا ہے
-        // تاکہ سرور پر جگہ خالی رہے۔ یہ ایک ایڈوانسڈ مرحلہ ہے۔
-
-        res.status(200).json({ message: 'ٹیمپلیٹ کامیابی سے ڈیلیٹ ہو گئی!' });
-
+        if (!deletedTemplate) return res.status(404).json({ message: 'ٹیمپلیٹ نہیں ملی' });
+        res.status(200).json({ message: 'ٹیمپلیٹ ڈیلیٹ ہو گئی!' });
     } catch (error) {
-        console.error("ٹیمپلیٹ ڈیلیٹ کرتے وقت خرابی:", error);
-        res.status(500).json({ message: 'سرور میں خرابی' });
+        res.status(500).json({ message: 'ڈیلیٹ کرتے وقت خرابی' });
     }
 });
-
-
-
 
 // سرور کو شروع کریں
 app.listen(PORT, () => {
