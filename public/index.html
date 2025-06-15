@@ -1,272 +1,226 @@
 <!DOCTYPE html>
-<html lang="en" dir="ltr">
+<html lang="en">
 <head>
-        
-
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>AI Template Builder</title>
+    <title>AI Template Generator</title>
     <style>
-    <style>
-    :root {
-        --background-color: #f0f2f5;
-        --card-color: #ffffff;
-        --text-color: #333333;
-        --secondary-text-color: #666666;
-        --border-color: #ccc;
-        --header-bg-color: #ffffff;
-        --button-primary-bg: #42b72a;
-        --button-secondary-bg: #3498db;
-    }
+        /* === تھیم کے رنگوں کے متغیرات === */
+        :root {
+            --bg-color: #f0f2f5;
+            --card-bg-color: #ffffff;
+            --text-color: #333333;
+            --secondary-text-color: #666;
+            --border-color: #ccc;
+            --header-bg-color: #ffffff;
+            --primary-btn-bg: #42b72a;
+            --secondary-btn-bg: #3498db;
+            --delete-btn-bg: #e74c3c;
+            --download-btn-bg: #27ae60;
+        }
 
-    body.dark-theme {
-        --background-color: #121212;
-        --card-color: #1e1e1e;
-        --text-color: #e0e0e0;
-        --secondary-text-color: #a0a0a0;
-        --border-color: #444;
-        --header-bg-color: #1e1e1e;
-        --button-primary-bg: #27ae60;
-        --button-secondary-bg: #2980b9;
-    }
+        body.dark-theme {
+            --bg-color: #121212;
+            --card-bg-color: #1e1e1e;
+            --text-color: #e0e0e0;
+            --secondary-text-color: #a0a0a0;
+            --border-color: #444;
+            --header-bg-color: #1e1e1e;
+            --primary-btn-bg: #27ae60;
+            --secondary-btn-bg: #2980b9;
+            --delete-btn-bg: #c0392b;
+            --download-btn-bg: #2ecc71;
+        }
+        
+        /* === بنیادی اسٹائلز === */
+        body { font-family: Arial, sans-serif; margin: 0; background-color: var(--bg-color); color: var(--text-color); transition: background-color 0.2s, color 0.2s; }
+        .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+        header { background-color: var(--header-bg-color); padding: 20px; text-align: center; box-shadow: 0 2px 4px rgba(0,0,0,.1); position: relative; }
+        #theme-switcher { font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--text-color); position: absolute; top: 15px; right: 20px; }
+        
+        /* === فارم کے اسٹائلز === */
+        .template-builder { background: var(--card-bg-color); padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); margin-top: 20px; }
+        .form-group { margin-bottom: 15px; }
+        .form-group label { display: block; margin-bottom: 5px; font-weight: bold; }
+        .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; box-sizing: border-box; background-color: var(--bg-color); color: var(--text-color); }
+        .cta-button { width: 100%; padding: 15px; border: none; background-color: var(--primary-btn-bg); color: white; font-size: 1.2rem; font-weight: bold; border-radius: 5px; cursor: pointer; }
+        .cta-button:disabled { background-color: #95a5a6; cursor: not-allowed; }
+        
+        /* === گیلری کے اسٹائلز === */
+        .template-gallery h2 { text-align: center; margin: 40px 0 20px 0; }
+        .gallery-grid { display: grid; grid-template-columns: repeat(auto-fill, minmax(300px, 1fr)); gap: 20px; min-height: 200px; }
+        .template-card { background: var(--card-bg-color); border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); overflow: hidden; text-align: center; cursor: pointer; }
+        .template-card img { width: 100%; height: 200px; object-fit: cover; display: block; }
+        .card-actions { margin-top: 15px; padding-bottom: 15px; }
+        .download-btn, .delete-btn { padding: 8px 15px; border: none; border-radius: 5px; cursor: pointer; margin: 0 5px; color: white; text-decoration: none; display: inline-block; font-size: 14px; }
+        .download-btn { background-color: var(--download-btn-bg); }
+        .delete-btn { background-color: var(--delete-btn-bg); }
+        .view-old-btn { background-color: var(--secondary-btn-bg); color: white; text-decoration: none; padding: 10px 15px; border-radius: 5px; display: inline-block; margin-top: 15px; }
 
-    body { 
-        font-family: Arial, sans-serif; 
-        margin: 0; 
-        background-color: var(--background-color); 
-        color: var(--text-color);
-        transition: background-color 0.3s, color 0.3s;
-    }
-    .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
-    header { 
-        background-color: var(--header-bg-color); 
-        padding: 20px; 
-        text-align: center; 
-        box-shadow: 0 2px 4px rgba(0,0,0,.1); 
-        position: relative; 
-    }
-    .header-controls { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
-    .theme-btn { font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--text-color); }
-    .language-switcher button { padding: 5px 10px; margin-left: 5px; border: 1px solid var(--border-color); background-color: transparent; cursor: pointer; color: var(--text-color); }
-    .language-switcher button.active { background-color: var(--button-secondary-bg); color: white; }
-    
-    .template-builder { background: var(--card-color); padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); margin: 40px 0; }
-    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; box-sizing: border-box; background-color: var(--background-color); color: var(--text-color); }
-    .cta-button { background-color: var(--button-primary-bg); }
-    .template-card { background: var(--card-color); }
-    
-    /* ... آپ کے باقی اسٹائلز ... */
-    /* ... The rest of your styles ... */
-    
-</style>
-
-    
+        /* === موڈل کا اسٹائل === */
+        .modal { display: none; position: fixed; z-index: 1000; left: 0; top: 0; width: 100%; height: 100%; overflow: auto; background-color: rgba(0,0,0,0.8); }
+        .modal-content { background-color: var(--card-bg-color); margin: 10% auto; padding: 20px; border: 1px solid var(--border-color); width: 80%; max-width: 600px; text-align: center; position: relative; border-radius: 8px; }
+        .close-button { color: var(--secondary-text-color); position: absolute; top: 10px; right: 25px; font-size: 35px; font-weight: bold; }
+        .close-button:hover, .close-button:focus { color: var(--text-color); text-decoration: none; cursor: pointer; }
+        #modal-image { width: 100%; max-height: 400px; object-fit: contain; border-radius: 5px; margin-bottom: 15px; }
+    </style>
 </head>
 <body>
-    <div id="image-modal" class="modal">
-  <div class="modal-content">
-    <span class="close-button">&times;</span>
-    <img id="modal-image" src="" alt="Modal Image">
-    <h3 id="modal-title"></h3>
-    <p id="modal-text"></p>
-  </div>
-</div>
 
     <header>
-        <div class="header-controls">
-    <div class="language-switcher">
-        <button data-lang="en">English</button>
-        <button data-lang="ur">اردو</button>
-        <button data-lang="ar">العربية</button>
-    </div>
-    <button id="theme-switcher" class="theme-btn">🌙</button>
-</div>
-
-        <h1 data-translate-key="appTitle">AI Template Generator</h1>
-    <a href="old_templates.html" target="_blank" class="view-old-btn">View Old Templates</a>
-</header>
+        <button id="theme-switcher" title="Toggle theme">🌙</button>
+        <h1>AI Template Generator</h1>
+        <a href="old_templates.html" target="_blank" class="view-old-btn">View Old Templates</a>
+    </header>
 
     <main class="container">
         <div class="template-builder">
-            <h2 data-translate-key="createSectionTitle">Create with AI</h2>
+            <h2>Create with AI</h2>
             <form id="template-form">
                 <div class="form-group">
-                    <label for="template-title" data-translate-key="templateTitleLabel">Image Prompt</label>
+                    <label for="template-title">Image Prompt</label>
                     <input type="text" id="template-title" name="title" required placeholder="e.g., A cute cat wearing a wizard hat">
                 </div>
                 <div class="form-group">
-                    <label for="template-text" data-translate-key="detailedTextLabel">Detailed text</label>
+                    <label for="template-text">Detailed text</label>
                     <textarea id="template-text" name="text" rows="4"></textarea>
                 </div>
-                <button type="submit" class="cta-button" data-translate-key="createButton">Generate Template</button>
+                <button type="submit" class="cta-button">Generate Template</button>
             </form>
-            <div id="response-message" class="message"></div>
         </div>
 
         <div class="template-gallery">
-            <h2 data-translate-key="currentTemplatesTitle">Generated Templates</h2>
+            <h2>Generated Templates</h2>
             <div class="gallery-grid"></div>
         </div>
     </main>
+
+    <div id="image-modal" class="modal">
+        <div class="modal-content">
+            <span class="close-button">&times;</span>
+            <img id="modal-image" src="" alt="Modal Image">
+            <h3 id="modal-title"></h3>
+            <p id="modal-text"></p>
+        </div>
+    </div>
 
     <footer>
         <p>&copy; 2025 - AI Template Builder</p>
     </footer>
 
-<script>
-    // --- تمام ضروری عناصر اور متغیرات ---
-    const templateForm = document.getElementById('template-form');
-    const titleInput = document.getElementById('template-title');
-    const textInput = document.getElementById('template-text');
-    const submitButton = templateForm.querySelector('.cta-button');
-    const galleryGrid = document.querySelector('.gallery-grid');
-    const modal = document.getElementById('image-modal');
-    const modalImage = document.getElementById('modal-image');
-    const modalTitle = document.getElementById('modal-title');
-    const modalText = document.getElementById('modal-text');
-    const closeButton = document.querySelector('.close-button');
-    const API_URL = 'https://my-template-builder-1.onrender.com';
-
-    let allTemplates = []; // تمام ٹیمپلیٹس کو یہاں محفوظ کریں گے
-
-    // --- اہم فنکشنز ---
-    
-    // تمام ٹیمپلیٹس کو لانا اور دکھانا
-    // نیا فنکشن: صرف تازہ ترین ٹیمپلیٹ دکھانے کے لیے
-async function fetchAndDisplayTemplates() {
-    try {
-        const response = await fetch(`${API_URL}/api/templates`);
-        allTemplates = await response.json(); 
-        galleryGrid.innerHTML = '';
-
-        if (allTemplates.length > 0) {
-            // صرف پہلی (سب سے نئی) ٹیمپلیٹ دکھائیں
-            const latestTemplate = allTemplates[0];
-            const card = document.createElement('div');
-            card.className = 'template-card';
-            card.dataset.index = 0; 
-            
-            card.innerHTML = `
-                <img src="${latestTemplate.imageUrl}" alt="${latestTemplate.title}">
-                <div class="card-actions">
-                    <a href="${latestTemplate.imageUrl}" class="download-btn" download>Download</a>
-                    <button class="delete-btn" data-id="${latestTemplate._id}">Delete</button>
-                </div>`;
-            galleryGrid.appendChild(card);
-        }
-
-    } catch (error) {
-        console.error('ٹیمپلیٹس لوڈ کرنے میں ناکامی:', error);
-    }
-}
-
-
-    // --- ایونٹ ہینڈلرز ---
-
-    // AI سے ٹیمپلیٹ بنانے کا فارم
-    templateForm.addEventListener('submit', async function(event) {
-        event.preventDefault();
-        
-        const originalButtonText = submitButton.textContent;
-        submitButton.disabled = true;
-        submitButton.textContent = 'Generating... Please wait...';
-
-        const data = {
-            title: titleInput.value,
-            text: textInput.value
+    <script>
+        // --- تھیم سوئچر کا کوڈ ---
+        const themeSwitcher = document.getElementById('theme-switcher');
+        const setTheme = (theme) => {
+            document.body.classList.toggle('dark-theme', theme === 'dark');
+            themeSwitcher.textContent = theme === 'dark' ? '☀️' : '🌙';
+            localStorage.setItem('theme', theme);
         };
-
-        try {
-            const response = await fetch(`${API_URL}/api/generate-template`, {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify(data)
-            });
-            const result = await response.json();
-            if (!response.ok) throw new Error(result.message);
-            
-            alert('کامیابی! آپ کی AI ٹیمپلیٹ بن گئی ہے۔');
-            templateForm.reset();
-            await fetchAndDisplayTemplates();
-        } catch (error) {
-            alert('ناکامی: ' + error.message);
-        } finally {
-            submitButton.disabled = false;
-            submitButton.textContent = originalButtonText;
+        themeSwitcher.addEventListener('click', () => {
+            const currentTheme = localStorage.getItem('theme') || 'light';
+            setTheme(currentTheme === 'light' ? 'dark' : 'light');
+        });
+        const savedTheme = localStorage.getItem('theme');
+        if (savedTheme) {
+            setTheme(savedTheme);
         }
-    });
+        // --- تھیم سوئچر کا کوڈ ختم ---
 
-    // گیلری میں کلکس کو سنبھالنا (موڈل اور ڈیلیٹ)
-    galleryGrid.addEventListener('click', async function(event) {
-        const card = event.target.closest('.template-card');
+        const templateForm = document.getElementById('template-form');
+        const titleInput = document.getElementById('template-title');
+        const textInput = document.getElementById('template-text');
+        const submitButton = templateForm.querySelector('.cta-button');
+        const galleryGrid = document.querySelector('.gallery-grid');
+        const modal = document.getElementById('image-modal');
+        const modalImage = document.getElementById('modal-image');
+        const modalTitle = document.getElementById('modal-title');
+        const modalText = document.getElementById('modal-text');
+        const closeButton = document.querySelector('.close-button');
+        const API_URL = 'https://my-template-builder-1.onrender.com';
+        let allTemplates = [];
 
-        if (event.target.classList.contains('delete-btn')) {
-            event.stopPropagation(); // موڈل کو کھلنے سے روکیں
-            const id = event.target.dataset.id;
-            if (confirm('کیا آپ واقعی اس ٹیمپلیٹ کو ڈیلیٹ کرنا چاہتے ہیں؟')) {
-                try {
-                    const response = await fetch(`${API_URL}/api/templates/${id}`, { method: 'DELETE' });
-                    if (!response.ok) throw new Error('ڈیلیٹ کرنے میں ناکامی');
-                    await fetchAndDisplayTemplates();
-                } catch (error) {
-                    alert('ناکامی: ' + error.message);
+        async function fetchAndDisplayTemplates() {
+            try {
+                const response = await fetch(`${API_URL}/api/templates`);
+                allTemplates = await response.json();
+                galleryGrid.innerHTML = '';
+                if (allTemplates.length > 0) {
+                    const latestTemplate = allTemplates[0];
+                    const card = document.createElement('div');
+                    card.className = 'template-card';
+                    card.dataset.id = latestTemplate._id;
+                    card.innerHTML = `
+                        <img src="${latestTemplate.imageUrl}" alt="${latestTemplate.title}">
+                        <div class="card-actions">
+                            <a href="${latestTemplate.imageUrl}" class="download-btn" download>Download</a>
+                            <button class="delete-btn" data-id="${latestTemplate._id}">Delete</button>
+                        </div>`;
+                    galleryGrid.appendChild(card);
+                }
+            } catch (error) {
+                console.error('Templates load error:', error);
+            }
+        }
+
+        templateForm.addEventListener('submit', async function(event) {
+            event.preventDefault();
+            const originalButtonText = submitButton.textContent;
+            submitButton.disabled = true;
+            submitButton.textContent = 'Generating... Please wait...';
+            const data = { title: titleInput.value, text: textInput.value };
+            try {
+                const response = await fetch(`${API_URL}/api/generate-template`, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify(data)
+                });
+                const result = await response.json();
+                if (!response.ok) throw new Error(result.message);
+                alert('Success! Your AI template has been created.');
+                templateForm.reset();
+                await fetchAndDisplayTemplates();
+            } catch (error) {
+                alert('Failed: ' + error.message);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = originalButtonText;
+            }
+        });
+
+        galleryGrid.addEventListener('click', async function(event) {
+            const card = event.target.closest('.template-card');
+            if (event.target.classList.contains('delete-btn')) {
+                event.stopPropagation();
+                const id = event.target.dataset.id;
+                if (confirm('Are you sure you want to delete this template?')) {
+                    try {
+                        await fetch(`${API_URL}/api/templates/${id}`, { method: 'DELETE' });
+                        await fetchAndDisplayTemplates();
+                    } catch (error) {
+                        alert('Failed to delete: ' + error.message);
+                    }
+                }
+            } else if (card) {
+                const id = card.dataset.id;
+                const template = allTemplates.find(t => t._id === id);
+                if (template) {
+                    modalImage.src = template.imageUrl;
+                    modalTitle.textContent = template.title;
+                    modalText.textContent = template.text || '';
+                    modal.style.display = 'block';
                 }
             }
-        } else if (card) { // اگر کارڈ پر کلک ہوا ہے (بٹنوں کے علاوہ)
-            const index = card.dataset.index;
-            const template = allTemplates[index];
-            
-            // درست کوڈ: یہاں سے بھی API_URL ہٹا دیا گیا ہے
-            modalImage.src = template.imageUrl;
-            modalTitle.textContent = template.title;
-            modalText.textContent = template.text || '';
-            modal.style.display = 'block';
-        }
-    });
-    
-    // موڈل کو بند کرنا
-    closeButton.addEventListener('click', function() {
-        modal.style.display = 'none';
-    });
-    window.addEventListener('click', function(event) {
-        if (event.target == modal) {
-            modal.style.display = 'none';
-        }
-    });
+        });
 
-    // تھیم سوئچر کا کوڈ
-const themeSwitcher = document.getElementById('theme-switcher');
+        closeButton.addEventListener('click', () => modal.style.display = 'none');
+        window.addEventListener('click', (event) => {
+            if (event.target == modal) {
+                modal.style.display = 'none';
+            }
+        });
 
-// فنکشن: تھیم سیٹ کرنا
-const setTheme = (theme) => {
-    if (theme === 'dark') {
-        document.body.classList.add('dark-theme');
-        themeSwitcher.textContent = '☀️'; // سورج کا آئیکن
-    } else {
-        document.body.classList.remove('dark-theme');
-        themeSwitcher.textContent = '🌙'; // چاند کا آئیکن
-    }
-    localStorage.setItem('theme', theme);
-};
-
-// بٹن پر کلک کا ایونٹ
-themeSwitcher.addEventListener('click', () => {
-    const currentTheme = localStorage.getItem('theme') || 'light';
-    if (currentTheme === 'light') {
-        setTheme('dark');
-    } else {
-        setTheme('light');
-    }
-});
-
-// صفحہ لوڈ ہوتے ہی محفوظ شدہ تھیم کو لاگو کریں
-document.addEventListener('DOMContentLoaded', () => {
-    const savedTheme = localStorage.getItem('theme') || 'light';
-    setTheme(savedTheme);
-    // ... آپ کا باقی DOMContentLoaded کا کوڈ ...
-});
-
-</script>
+        document.addEventListener('DOMContentLoaded', fetchAndDisplayTemplates);
+    </script>
 
 </body>
 </html>
