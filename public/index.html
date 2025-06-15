@@ -7,66 +7,59 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Template Builder</title>
     <style>
-        .view-old-btn {
-    display: inline-block;
-    margin-top: 15px;
-    padding: 10px 20px;
-    background-color: #3498db;
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-}
+    <style>
+    :root {
+        --background-color: #f0f2f5;
+        --card-color: #ffffff;
+        --text-color: #333333;
+        --secondary-text-color: #666666;
+        --border-color: #ccc;
+        --header-bg-color: #ffffff;
+        --button-primary-bg: #42b72a;
+        --button-secondary-bg: #3498db;
+    }
 
-        /* === موڈل کا اسٹائل === */
-.modal {
-  display: none; /* پہلے سے چھپا ہوا ہو */
-  position: fixed;
-  z-index: 1000;
-  left: 0;
-  top: 0;
-  width: 100%;
-  height: 100%;
-  overflow: auto;
-  background-color: rgba(0,0,0,0.8); /* سیاہ پس منظر */
-}
+    body.dark-theme {
+        --background-color: #121212;
+        --card-color: #1e1e1e;
+        --text-color: #e0e0e0;
+        --secondary-text-color: #a0a0a0;
+        --border-color: #444;
+        --header-bg-color: #1e1e1e;
+        --button-primary-bg: #27ae60;
+        --button-secondary-bg: #2980b9;
+    }
 
-.modal-content {
-  background-color: #fefefe;
-  margin: 10% auto;
-  padding: 20px;
-  border: 1px solid #888;
-  width: 80%;
-  max-width: 600px;
-  text-align: center;
-  position: relative;
-  border-radius: 8px;
-}
+    body { 
+        font-family: Arial, sans-serif; 
+        margin: 0; 
+        background-color: var(--background-color); 
+        color: var(--text-color);
+        transition: background-color 0.3s, color 0.3s;
+    }
+    .container { max-width: 1200px; margin: 20px auto; padding: 0 20px; }
+    header { 
+        background-color: var(--header-bg-color); 
+        padding: 20px; 
+        text-align: center; 
+        box-shadow: 0 2px 4px rgba(0,0,0,.1); 
+        position: relative; 
+    }
+    .header-controls { display: flex; justify-content: space-between; align-items: center; max-width: 1200px; margin: 0 auto; }
+    .theme-btn { font-size: 1.5rem; background: none; border: none; cursor: pointer; color: var(--text-color); }
+    .language-switcher button { padding: 5px 10px; margin-left: 5px; border: 1px solid var(--border-color); background-color: transparent; cursor: pointer; color: var(--text-color); }
+    .language-switcher button.active { background-color: var(--button-secondary-bg); color: white; }
+    
+    .template-builder { background: var(--card-color); padding: 30px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,.1); margin: 40px 0; }
+    .form-group input, .form-group textarea { width: 100%; padding: 10px; border: 1px solid var(--border-color); border-radius: 5px; box-sizing: border-box; background-color: var(--background-color); color: var(--text-color); }
+    .cta-button { background-color: var(--button-primary-bg); }
+    .template-card { background: var(--card-color); }
+    
+    /* ... آپ کے باقی اسٹائلز ... */
+    /* ... The rest of your styles ... */
+    
+</style>
 
-.close-button {
-  color: #aaa;
-  position: absolute;
-  top: 10px;
-  right: 25px;
-  font-size: 35px;
-  font-weight: bold;
-}
-
-.close-button:hover,
-.close-button:focus {
-  color: black;
-  text-decoration: none;
-  cursor: pointer;
-}
-
-#modal-image {
-  width: 100%;
-  max-height: 400px;
-  object-fit: contain;
-  border-radius: 5px;
-}
-
-        body{font-family:Arial,sans-serif;margin:0;background-color:#f0f2f5;color:#333}.container{max-width:1200px;margin:20px auto;padding:0 20px}header{background-color:#fff;padding:20px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.1);position:relative}.language-switcher{position:absolute;top:10px;right:10px}.language-switcher button{padding:5px 10px;margin-left:5px;border:1px solid #ddd;background-color:#f9f9f9;cursor:pointer}.language-switcher button.active{background-color:#3498db;color:white;border-color:#3498db}.search-container{margin-top:15px;display:flex;justify-content:center}.search-container input{width:50%;padding:10px;border:1px solid #ddd;border-radius:20px 0 0 20px;outline:none}.search-container button{padding:10px 20px;border:none;background-color:#1877f2;color:white;border-radius:0 20px 20px 0;cursor:pointer}.template-builder{background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:40px}.template-builder h2{text-align:center;margin-bottom:20px;color:#1877f2}.form-group{margin-bottom:15px}.form-group label{display:block;margin-bottom:5px;font-weight:bold}.form-group input,.form-group textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}.cta-button{width:100%;padding:15px;border:none;background-color:#42b72a;color:white;font-size:1.2rem;font-weight:bold;border-radius:5px;cursor:pointer}.cta-button:hover{background-color:#36a420}.cta-button:disabled{background-color:#95a5a6;cursor:not-allowed}.template-gallery h2{text-align:center;margin-bottom:20px}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}.template-card{background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);overflow:hidden;text-align:center}.template-card img{width:100%;height:200px;object-fit:cover}.template-card h3{margin:15px 0 10px 0}.template-card p{padding:0 15px 15px 15px;color:#666}.message{text-align:center;padding:10px;margin-top:15px;border-radius:5px;display:none}.message.success{background-color:#d4edda;color:#155724}.message.error{background-color:#f8d7da;color:#721c24}footer{text-align:center;padding:20px;margin-top:40px;background-color:#333;color:#fff}.card-actions{margin-top:15px}.edit-btn,.delete-btn,.cancel-btn,.download-btn{padding:8px 15px;border:none;border-radius:5px;cursor:pointer;margin:0 5px;color:white;text-decoration:none;display:inline-block;font-size:14px;font-family:Arial,sans-serif}.edit-btn{background-color:#3498db}.delete-btn{background-color:#e74c3c}.cancel-btn{background-color:#7f8c8d;margin-top:10px;width:100%}.download-btn{background-color:#27ae60}
-    </style>
     
 </head>
 <body>
@@ -241,8 +234,38 @@ async function fetchAndDisplayTemplates() {
         }
     });
 
-    // صفحہ لوڈ ہوتے ہی ٹیمپلیٹس دکھائیں
-    document.addEventListener('DOMContentLoaded', fetchAndDisplayTemplates);
+    // تھیم سوئچر کا کوڈ
+const themeSwitcher = document.getElementById('theme-switcher');
+
+// فنکشن: تھیم سیٹ کرنا
+const setTheme = (theme) => {
+    if (theme === 'dark') {
+        document.body.classList.add('dark-theme');
+        themeSwitcher.textContent = '☀️'; // سورج کا آئیکن
+    } else {
+        document.body.classList.remove('dark-theme');
+        themeSwitcher.textContent = '🌙'; // چاند کا آئیکن
+    }
+    localStorage.setItem('theme', theme);
+};
+
+// بٹن پر کلک کا ایونٹ
+themeSwitcher.addEventListener('click', () => {
+    const currentTheme = localStorage.getItem('theme') || 'light';
+    if (currentTheme === 'light') {
+        setTheme('dark');
+    } else {
+        setTheme('light');
+    }
+});
+
+// صفحہ لوڈ ہوتے ہی محفوظ شدہ تھیم کو لاگو کریں
+document.addEventListener('DOMContentLoaded', () => {
+    const savedTheme = localStorage.getItem('theme') || 'light';
+    setTheme(savedTheme);
+    // ... آپ کا باقی DOMContentLoaded کا کوڈ ...
+});
+
 </script>
 
 </body>
