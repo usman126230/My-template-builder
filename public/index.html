@@ -130,10 +130,12 @@
                 const card = document.createElement('div');
                 card.className = 'template-card';
                 card.dataset.index = index; // ہر کارڈ کو ایک انڈیکس دیں
+                
+                // درست کوڈ: یہاں سے API_URL ہٹا دیا گیا ہے
                 card.innerHTML = `
-                    <img src="${API_URL}/${template.imageUrl}" alt="${template.title}">
+                    <img src="${template.imageUrl}" alt="${template.title}">
                     <div class="card-actions">
-                        <a href="${API_URL}/${template.imageUrl}" class="download-btn" download>Download</a>
+                        <a href="${template.imageUrl}" class="download-btn" download>Download</a>
                         <button class="delete-btn" data-id="${template._id}">Delete</button>
                     </div>`;
                 galleryGrid.appendChild(card);
@@ -183,6 +185,7 @@
         const card = event.target.closest('.template-card');
 
         if (event.target.classList.contains('delete-btn')) {
+            event.stopPropagation(); // موڈل کو کھلنے سے روکیں
             const id = event.target.dataset.id;
             if (confirm('کیا آپ واقعی اس ٹیمپلیٹ کو ڈیلیٹ کرنا چاہتے ہیں؟')) {
                 try {
@@ -197,7 +200,8 @@
             const index = card.dataset.index;
             const template = allTemplates[index];
             
-            modalImage.src = `${API_URL}/${template.imageUrl}`;
+            // درست کوڈ: یہاں سے بھی API_URL ہٹا دیا گیا ہے
+            modalImage.src = template.imageUrl;
             modalTitle.textContent = template.title;
             modalText.textContent = template.text || '';
             modal.style.display = 'block';
