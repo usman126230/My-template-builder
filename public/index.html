@@ -1,10 +1,22 @@
 <!DOCTYPE html>
 <html lang="en" dir="ltr">
 <head>
+        
+
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>AI Template Builder</title>
     <style>
+        .view-old-btn {
+    display: inline-block;
+    margin-top: 15px;
+    padding: 10px 20px;
+    background-color: #3498db;
+    color: white;
+    text-decoration: none;
+    border-radius: 5px;
+}
+
         /* === موڈل کا اسٹائل === */
 .modal {
   display: none; /* پہلے سے چھپا ہوا ہو */
@@ -55,6 +67,7 @@
 
         body{font-family:Arial,sans-serif;margin:0;background-color:#f0f2f5;color:#333}.container{max-width:1200px;margin:20px auto;padding:0 20px}header{background-color:#fff;padding:20px;text-align:center;box-shadow:0 2px 4px rgba(0,0,0,.1);position:relative}.language-switcher{position:absolute;top:10px;right:10px}.language-switcher button{padding:5px 10px;margin-left:5px;border:1px solid #ddd;background-color:#f9f9f9;cursor:pointer}.language-switcher button.active{background-color:#3498db;color:white;border-color:#3498db}.search-container{margin-top:15px;display:flex;justify-content:center}.search-container input{width:50%;padding:10px;border:1px solid #ddd;border-radius:20px 0 0 20px;outline:none}.search-container button{padding:10px 20px;border:none;background-color:#1877f2;color:white;border-radius:0 20px 20px 0;cursor:pointer}.template-builder{background:#fff;padding:30px;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);margin-bottom:40px}.template-builder h2{text-align:center;margin-bottom:20px;color:#1877f2}.form-group{margin-bottom:15px}.form-group label{display:block;margin-bottom:5px;font-weight:bold}.form-group input,.form-group textarea{width:100%;padding:10px;border:1px solid #ccc;border-radius:5px;box-sizing:border-box}.cta-button{width:100%;padding:15px;border:none;background-color:#42b72a;color:white;font-size:1.2rem;font-weight:bold;border-radius:5px;cursor:pointer}.cta-button:hover{background-color:#36a420}.cta-button:disabled{background-color:#95a5a6;cursor:not-allowed}.template-gallery h2{text-align:center;margin-bottom:20px}.gallery-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(300px,1fr));gap:20px}.template-card{background:#fff;border-radius:8px;box-shadow:0 2px 4px rgba(0,0,0,.1);overflow:hidden;text-align:center}.template-card img{width:100%;height:200px;object-fit:cover}.template-card h3{margin:15px 0 10px 0}.template-card p{padding:0 15px 15px 15px;color:#666}.message{text-align:center;padding:10px;margin-top:15px;border-radius:5px;display:none}.message.success{background-color:#d4edda;color:#155724}.message.error{background-color:#f8d7da;color:#721c24}footer{text-align:center;padding:20px;margin-top:40px;background-color:#333;color:#fff}.card-actions{margin-top:15px}.edit-btn,.delete-btn,.cancel-btn,.download-btn{padding:8px 15px;border:none;border-radius:5px;cursor:pointer;margin:0 5px;color:white;text-decoration:none;display:inline-block;font-size:14px;font-family:Arial,sans-serif}.edit-btn{background-color:#3498db}.delete-btn{background-color:#e74c3c}.cancel-btn{background-color:#7f8c8d;margin-top:10px;width:100%}.download-btn{background-color:#27ae60}
     </style>
+    
 </head>
 <body>
     <div id="image-modal" class="modal">
@@ -73,7 +86,8 @@
             <button data-lang="ar">العربية</button>
         </div>
         <h1 data-translate-key="appTitle">AI Template Generator</h1>
-    </header>
+    <a href="old_templates.html" target="_blank" class="view-old-btn">View Old Templates</a>
+</header>
 
     <main class="container">
         <div class="template-builder">
@@ -121,29 +135,34 @@
     // --- اہم فنکشنز ---
     
     // تمام ٹیمپلیٹس کو لانا اور دکھانا
-    async function fetchAndDisplayTemplates() {
-        try {
-            const response = await fetch(`${API_URL}/api/templates`);
-            allTemplates = await response.json(); // ڈیٹا کو عالمی متغیر میں محفوظ کریں
-            galleryGrid.innerHTML = '';
-            allTemplates.forEach((template, index) => {
-                const card = document.createElement('div');
-                card.className = 'template-card';
-                card.dataset.index = index; // ہر کارڈ کو ایک انڈیکس دیں
-                
-                // درست کوڈ: یہاں سے API_URL ہٹا دیا گیا ہے
-                card.innerHTML = `
-                    <img src="${template.imageUrl}" alt="${template.title}">
-                    <div class="card-actions">
-                        <a href="${template.imageUrl}" class="download-btn" download>Download</a>
-                        <button class="delete-btn" data-id="${template._id}">Delete</button>
-                    </div>`;
-                galleryGrid.appendChild(card);
-            });
-        } catch (error) {
-            console.error('ٹیمپلیٹس لوڈ کرنے میں ناکامی:', error);
+    // نیا فنکشن: صرف تازہ ترین ٹیمپلیٹ دکھانے کے لیے
+async function fetchAndDisplayTemplates() {
+    try {
+        const response = await fetch(`${API_URL}/api/templates`);
+        allTemplates = await response.json(); 
+        galleryGrid.innerHTML = '';
+
+        if (allTemplates.length > 0) {
+            // صرف پہلی (سب سے نئی) ٹیمپلیٹ دکھائیں
+            const latestTemplate = allTemplates[0];
+            const card = document.createElement('div');
+            card.className = 'template-card';
+            card.dataset.index = 0; 
+            
+            card.innerHTML = `
+                <img src="${latestTemplate.imageUrl}" alt="${latestTemplate.title}">
+                <div class="card-actions">
+                    <a href="${latestTemplate.imageUrl}" class="download-btn" download>Download</a>
+                    <button class="delete-btn" data-id="${latestTemplate._id}">Delete</button>
+                </div>`;
+            galleryGrid.appendChild(card);
         }
+
+    } catch (error) {
+        console.error('ٹیمپلیٹس لوڈ کرنے میں ناکامی:', error);
     }
+}
+
 
     // --- ایونٹ ہینڈلرز ---
 
